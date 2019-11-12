@@ -28,17 +28,17 @@ double euclidean(Point p1,Point p2) {
 }
 
 
-int DTW::min(double left,double up,double diagonal,int *succesor) {
+int DTW::min(double left,double up,double diagonal,int *predecessor) {
     if (left <= up && left <= diagonal) {
-        *succesor = this->left;
+        *predecessor = this->left;
         return left;
     }
     else if (up <= left && up <= diagonal) {
-        *succesor = this->up;
+        *predecessor = this->up;
         return up;
     }
     else {
-        *succesor = this->diagonal;
+        *predecessor = this->diagonal;
         return diagonal;
     }
 }
