@@ -63,6 +63,7 @@ add_executable(curve_grid_lsh
 
 add_executable(test_dba
         src/test_dba.cpp
+        src/strategy.h
         src/dba.h src/dba.cpp 
         src/Curve.h src/Curve.cpp
         src/Point.h src/Point.cpp
