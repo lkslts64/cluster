@@ -31,10 +31,8 @@ add_executable(lsh
         src/parse_files.cpp src/parse_files.h
         src/search.cpp 
         src/search.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp src/Cube.h 
-        src/Projection.cpp src/Projection.h 
-        src/RelevantTraversals.cpp src/RelevantTraversals.h)
+        src/GenericAlgorithm.h
+        )
 
 add_executable(curve_grid_lsh
         src/curve_grid_lsh.cpp
@@ -58,14 +56,10 @@ add_executable(curve_grid_lsh
         src/ui.h 
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Projection.cpp src/Projection.h 
-        src/Cube.h 
-        src/search.cpp 
-        src/search.h 
-        src/RelevantTraversals.cpp 
-        src/RelevantTraversals.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp)
+        src/search.cpp
+        src/search.h
+        src/GenericAlgorithm.h
+        )
 
 add_executable(test_dba
         src/test_dba.cpp
@@ -98,14 +92,10 @@ add_executable(test_curve_grid_lsh
         src/ui.h 
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Projection.cpp src/Projection.h 
-        src/Cube.h 
-        src/search.cpp 
-        src/search.h 
-        src/RelevantTraversals.cpp 
-        src/RelevantTraversals.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp)
+        src/search.cpp
+        src/search.h
+        src/GenericAlgorithm.h
+        )
 
 add_executable(test_point_hasher
         src/test_point_hasher.cpp
@@ -129,14 +119,10 @@ add_executable(test_point_hasher
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Cube.h
-        src/Projection.cpp 
-        src/Projection.h 
-        src/RelevantTraversals.cpp src/RelevantTraversals.h 
-        src/search.cpp 
+        src/search.cpp
         src/search.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp)
+        src/GenericAlgorithm.h
+        )
 
 add_executable(test_curve_hasher
         src/test_curve_hasher.cpp
@@ -160,14 +146,10 @@ add_executable(test_curve_hasher
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Projection.cpp src/Projection.h 
-        src/Cube.h 
-        src/search.cpp 
-        src/search.h 
-        src/RelevantTraversals.cpp 
-        src/RelevantTraversals.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp)
+        src/search.cpp
+        src/search.h
+        src/GenericAlgorithm.h
+        )
 
 add_executable(test_lsh_points
         src/test_lsh_points.cpp
@@ -191,10 +173,7 @@ add_executable(test_lsh_points
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Projection.cpp src/Projection.h 
-        src/RelevantTraversals.cpp src/RelevantTraversals.h 
-        src/Cube.h 
-        src/search.cpp 
+        src/search.cpp
         src/search.h 
-        src/GenericAlgorithm.h 
-        src/Cube.cpp)
+        src/GenericAlgorithm.h
+        )
