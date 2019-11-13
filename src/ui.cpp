@@ -1,12 +1,9 @@
 #include <iostream>
-#include <getopt.h>
 #include <algorithm>
 #include "utils.h"
 #include "Dataset.h"
 #include "LSH.h"
-#include "Cube.h"
 #include "ui.h"
-#include "Projection.h"
 
 using namespace std;
 
@@ -51,38 +48,6 @@ void readArgumentsLSHPoints(LSH* lsh, int argc, char **argv) {
         lsh->setNumOfHashTables(5);
 }
 
-void readArgumentsCubePoints(Cube* cube, int argc, char **argv) {
-    auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        cube->getLsh()->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        cube->getLsh()->setQueryFilename(parser->getCmdOption("-q"));
-    if (parser->cmdOptionExists("-o"))
-        cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k"))
-        cube->setDimension(stoi(parser->getCmdOption("-k")));
-    if (parser->cmdOptionExists("-M"))
-        cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
-    if (parser->cmdOptionExists("-probes"))
-        cube->setMaxProbes(stoi(parser->getCmdOption("-probes")));
-}   
-
-void readArgumentsCubeCurves(Cube* cube, int argc, char **argv) {
-    auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        cube->getLsh()->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        cube->getLsh()->setQueryFilename(parser->getCmdOption("-q"));
-    if (parser->cmdOptionExists("-o"))
-        cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k_hypercube"))
-        cube->setDimension(stoi(parser->getCmdOption("-k")));
-    if (parser->cmdOptionExists("-M"))
-        cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
-    if (parser->cmdOptionExists("-probes"))
-        cube->setMaxProbes(stoi(parser->getCmdOption("-probes")));
-}   
-
 void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
     auto parser = new InputParser(argc,argv);
     if (parser->cmdOptionExists("-d"))
@@ -99,48 +64,6 @@ void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
         lsh->setNumOfHashTables(stoi(parser->getCmdOption("-L_grid")));
     else 
         lsh->setNumOfHashTables(4);
-}
-
-void readArgumentsLSHProjectionCurves(Projection* projection, int argc, char **argv){
-    auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        projection->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        projection->setQueryFilename(parser->getCmdOption("-q"));
-    if (parser->cmdOptionExists("-o"))
-        projection->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k_vec"))
-        projection->getAnn()->setNumOfFunctions(stoi(parser->getCmdOption("-k_vec")));
-    else
-        projection->getAnn()->setNumOfFunctions(4);
-    if (parser->cmdOptionExists("-L_vec"))
-        projection->getAnn()->setNumOfHashTables(stoi(parser->getCmdOption("-L_vec")));
-    else
-        projection->getAnn()->setNumOfHashTables(5);
-    if (parser->cmdOptionExists("-e"))
-        projection->setNormalMatrix(stod(parser->getCmdOption("-e")));
-    else
-        projection->setNormalMatrix(0.5);
-}
-
-void readArgumentsCubeProjectionCurves(Projection* projection, int argc, char **argv) {
-    auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        projection->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        projection->setQueryFilename(parser->getCmdOption("-q"));
-    if (parser->cmdOptionExists("-o"))
-        projection->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k_hypercube"))
-        projection->getAnn()->setDimension(stoi(parser->getCmdOption("-k_hypercube")));
-    if (parser->cmdOptionExists("-M"))
-        projection->getAnn()->setMaxChecked(stoi(parser->getCmdOption("-M")));
-    if (parser->cmdOptionExists("-probes"))
-        projection->getAnn()->setMaxProbes(stoi(parser->getCmdOption("-probes")));
-    if (parser->cmdOptionExists("-e"))
-        projection->setNormalMatrix(stod(parser->getCmdOption("-e")));
-    else
-        projection->setNormalMatrix(0.5);
 }
 
 string askInputFile(){
