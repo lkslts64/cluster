@@ -12,6 +12,7 @@ private:
 
 public:
     Point(string id);
+    Point(){}
     Point(vector<double> coordinates);
     ~Point();
     void foo(){}

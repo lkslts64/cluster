@@ -3,7 +3,7 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_CXX_STANDARD 14)
 add_compile_options(-fpermissive)
-add_compile_options(-O3)
+#add_compile_options(-O3)
 link_libraries(cunit)
 project (algorithms_project)
 
@@ -66,6 +66,14 @@ add_executable(curve_grid_lsh
         src/RelevantTraversals.h 
         src/GenericAlgorithm.h 
         src/Cube.cpp)
+
+add_executable(test_dba
+        src/test_dba.cpp
+        src/dba.h src/dba.cpp 
+        src/Curve.h src/Curve.cpp
+        src/Point.h src/Point.cpp
+        src/distance.h src/distance.cpp
+)
 
 add_executable(test_curve_grid_lsh
         src/test_curve_grid_lsh.cpp
