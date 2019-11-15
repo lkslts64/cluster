@@ -12,8 +12,9 @@ int main(int argc, char* argv[]) {
     readArguments(cluster, argc, argv);
 
     //put condition if the file is points or curves
-    cluster->setData(parseFilePoints(cluster->getGeneralParameters()->getInputFilename()));
-    //test_print_data(cluster->getDataset());
+    cluster->setData(parseFile(cluster->getGeneralParameters()->getInputFilename()));
+    //test_print_data_points(cluster->getDataset());
+    test_print_data_curves(cluster->getDataset());
 
     //for 8 combinations
     {

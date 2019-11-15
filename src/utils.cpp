@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include "utils.h"
+#include "Curve.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ bool is_number(string s)
             find_if(s.begin(), s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
-void test_print_data(Dataset *data) {
+void test_print_data_points(Dataset *data) {
     auto objs = data->getData();
     vector<Point *> points(objs.begin(),objs.end());
     for (int i = 0; i < points.size(); i++) {
@@ -41,6 +42,19 @@ void test_print_data(Dataset *data) {
         auto coords = points[i]->getCoordinates();
         for (int j = 0; j < coords.size(); ++j) {
             cout << coords[j] << " ";
+        }
+        cout << endl;
+    }
+    cout << data->getDimension() << " " << data->getSize() << endl;
+}
+
+void test_print_data_curves(Dataset *data){
+    auto objs = data->getData();
+    vector<Curve *> curves(objs.begin(),objs.end());
+    for(auto curve: curves){
+        cout << "CHECKING ITEM ID: " << curve->getId() << endl;
+        for(auto point: curve->getPoints()){
+            cout << "(" << point.getCoordinate(0) << "," << point.getCoordinate(1) << ") ";
         }
         cout << endl;
     }
