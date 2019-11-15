@@ -68,7 +68,7 @@ void test_HashAmplified(void) {
    lsh = new LSH(new Manhattan());
    //all points are around 0-120 approx
    lsh->setInputFilename("../src/very_small_input_for_testing");
-   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   lsh->setData(parseFilePoints(lsh->getInputFilename()));
    auto dataset = lsh->getDataset();
    auto numDim = dataset->getDimension();
    auto points = dataset->getData();
@@ -89,7 +89,7 @@ void test_HashAmplified(void) {
    //second dataset (instructor's)
    lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
-   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   lsh->setData(parseFilePoints(lsh->getInputFilename()));
    dataset = lsh->getDataset();
    numDim = dataset->getDimension();
    points = dataset->getData();
@@ -111,7 +111,7 @@ void test_HashAmplified(void) {
 void test_MultipleHashers(){
    lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
-   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   lsh->setData(parseFilePoints(lsh->getInputFilename()));
    auto dataset = lsh->getDataset();
    auto numDim = dataset->getDimension();
    auto points = dataset->getData();

@@ -167,7 +167,7 @@ void test_Hash() {
    //vectorize
    auto lsh = new LSH(new DTW());
    lsh->setInputFilename("../src/testdata/trajectories_input_small");
-   lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+   lsh->setData(parseFileCurves(lsh->getInputFilename()));
    lsh->setNumOfFunctions(4);
    lsh->setNumOfHashTables(5);
    int bucketRes2, vectoriseRes2;

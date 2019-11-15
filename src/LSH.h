@@ -3,9 +3,22 @@
 #include "Dataset.h"
 #include "HashTableStruct.h"
 #include "distance.h"
-#include "GenericAlgorithm.h"
+#include "GeneralParameters.h"
+using namespace std;
 
-class LSH : public GenericAlgorithm, public ANN_Structure {
+class ANN_Structure {
+public:
+
+    virtual int getNumOfFunctions() const {}
+    virtual int getNumOfHashTables() const {}
+    virtual void setNumOfFunctions(int numOfFunctions){}
+    virtual void setNumOfHashTables(int numOfHashTables){}
+    virtual HashTableStruct * getHashTableStruct(){}
+    virtual void setHashTableStruct(HashTableStruct *ht) {}
+};
+
+
+class LSH : public ANN_Structure {
 private:
 
     HashTableStruct * tables;

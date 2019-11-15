@@ -90,13 +90,13 @@ void test_ParseTestFile(LSH *lsh) {
 void test_ParseCurves() {
     auto lsh = new LSH(new DTW());
     lsh->setInputFilename("../src/testdata/curves_loukas_small");
-    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseFileCurves(lsh->getInputFilename()));
     test_ParseTestFile(lsh);
     delete lsh;
     //----------------------
     lsh = new LSH(new DTW());
     lsh->setInputFilename("../src/testdata/trajectories_input");
-    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseFileCurves(lsh->getInputFilename()));
     CU_ASSERT(lsh->getDataset()->getSize() == 7401);
     delete lsh;
     //----------------------
@@ -111,7 +111,7 @@ void test_ParseCurves() {
 LSH *LoadInputLSHCurves(string inputFilename,string queryFilename) {
    auto lsh = new LSH(new DTW());
     lsh->setInputFilename(inputFilename);
-    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseFileCurves(lsh->getInputFilename()));
     lsh->setNumOfFunctions(4);
     lsh->setNumOfHashTables(5);
     auto dataset = lsh->getDataset();
@@ -129,7 +129,7 @@ LSH *LoadInputLSHCurves(string inputFilename,string queryFilename) {
 void test_NumBuckets() {
    auto lsh = new LSH(new DTW());
     lsh->setInputFilename("../src/testdata/trajectories_input");
-    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseFileCurves(lsh->getInputFilename()));
     lsh->setNumOfFunctions(4);
     lsh->setNumOfHashTables(5);
     auto dataset = lsh->getDataset();

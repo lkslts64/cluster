@@ -17,7 +17,7 @@ void setQueryData(LSH *lsh,string queryFilename) {
 LSH *setInputData(string inputFilename) {
     auto lsh = new LSH(new Manhattan());
     lsh->setInputFilename(inputFilename);
-    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    lsh->setData(parseFilePoints(lsh->getInputFilename()));
     lsh->setNumOfFunctions(4);
     lsh->setNumOfHashTables(5);
     //TODO: change this when we have a good formula for window.

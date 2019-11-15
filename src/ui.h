@@ -1,11 +1,7 @@
 #ifndef ALGORITHMS_PROJECT_UI_H
 #define ALGORITHMS_PROJECT_UI_H
-#include "LSH.h"
+#include "Cluster.h"
 
-void readArgumentsLSHPoints(LSH* lsh, int argc, char **argv);
-void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv);
-string askInputFile();
-string askQueryFile();
-string askOutputFile();
+void readArguments(Cluster* cluster, int argc, char **argv);
 
 #endif //ALGORITHMS_PROJECT_UI_H

@@ -1,8 +1,10 @@
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <map>
 #include "utils.h"
 #include "Dataset.h"
-#include "LSH.h"
+#include "Cluster.h"
 #include "ui.h"
 
 using namespace std;
@@ -30,59 +32,59 @@ class InputParser{
         }
 };
 
-void readArgumentsLSHPoints(LSH* lsh, int argc, char **argv) {
+void parseConfigFile(GeneralParameters *gen_params, const string &config_filename) {
+    if(!file_exists(config_filename.c_str())){
+        cout << "configuration file does not exist" << endl;
+        exit(-1);
+    };
+    ifstream infile(config_filename);
+    string line;
+    map<string, int> params_map;
+    //construct params_map
+    while(getline(infile, line)){
+        string param_name = line.substr(0, line.find(':'));
+        string param_value = line.substr(line.find(':') + 1);
+        params_map[param_name] = stoi(param_value);
+    }
+
+    if(params_map.find("number_of_clusters") != params_map.end())
+        gen_params->setNumOfClusters(params_map["number_of_clusters"]);
+    else{
+        cout << "configuration file error: number_of_clusters does not exist" << endl;
+        exit(-1);
+    }
+    if(params_map.find("number_of_grids") != params_map.end())
+        gen_params->setNumOfGrids(params_map["number_of_grids"]);
+    else{
+        cout << "configuration file error: number_of_grids does not exist" << endl;
+        exit(-1);
+    }
+    if(params_map.find("number_of_vector_hash_tables") != params_map.end())
+        gen_params->setNumOfVectorHashTables(params_map["number_of_vector_hash_tables"]);
+    else{
+        cout << "configuration file error: number_of_vector_hash_tables does not exist" << endl;
+        exit(-1);
+    }
+    if(params_map.find("number_of_vector_hash_functions") != params_map.end())
+        gen_params->setNumOfVectorHashFunctions(params_map["number_of_vector_hash_functions"]);
+    else{
+        cout << "configuration file error: number_of_vector_hash_functions does not exist" << endl;
+        exit(-1);
+    }
+}
+
+void readArguments(Cluster* cluster, int argc, char **argv){
     auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        lsh->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        lsh->setQueryFilename(parser->getCmdOption("-q"));
+    auto gen_params = new GeneralParameters;
+    if (parser->cmdOptionExists("-i"))
+        gen_params->setInputFilename(parser->getCmdOption("-i"));
     if (parser->cmdOptionExists("-o"))
-        lsh->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k"))
-        lsh->setNumOfFunctions(stoi(parser->getCmdOption("-k")));
-    else
-        lsh->setNumOfFunctions(4);
-    if (parser->cmdOptionExists("-L"))
-        lsh->setNumOfHashTables(stoi(parser->getCmdOption("-L")));
-    else
-        lsh->setNumOfHashTables(5);
+        gen_params->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-complete"))
+        gen_params->setIsComplete(true);
+    if (parser->cmdOptionExists("-c"))
+        parseConfigFile(gen_params, parser->getCmdOption("-c"));
+    cluster->setGeneralParameters(gen_params);
 }
 
-void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
-    auto parser = new InputParser(argc,argv);
-    if (parser->cmdOptionExists("-d"))
-        lsh->setInputFilename(parser->getCmdOption("-d"));
-    if (parser->cmdOptionExists("-q"))
-        lsh->setQueryFilename(parser->getCmdOption("-q"));
-    if (parser->cmdOptionExists("-o"))
-        lsh->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k_vec"))
-        lsh->setNumOfFunctions(stoi(parser->getCmdOption("-k_vec")));
-    else 
-        lsh->setNumOfFunctions(1);
-    if (parser->cmdOptionExists("-L_grid"))
-        lsh->setNumOfHashTables(stoi(parser->getCmdOption("-L_grid")));
-    else 
-        lsh->setNumOfHashTables(4);
-}
 
-string askInputFile(){
-    string filename;
-    cout << "Please give input filename" << endl;
-    cin >> filename;
-    return filename;
-}
-
-string askQueryFile(){
-    string filename;
-    cout << "Please give query filename" << endl;
-    cin >> filename;
-    return filename;
-}
-
-string askOutputFile(){
-    string filename;
-    cout << "Please give output filename" << endl;
-    cin >> filename;
-    return filename;
-}
