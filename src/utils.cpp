@@ -1,6 +1,5 @@
 #include <sys/stat.h>
 #include <vector>
-#include <algorithm>
 #include <iostream>
 #include "utils.h"
 #include "Curve.h"
@@ -26,12 +25,6 @@ int powModulo(int base,int exp,int div) {
 bool file_exists(const char* filename){
     struct stat buffer;
     return (stat (filename, &buffer) == 0);
-}
-
-bool is_number(string s)
-{
-    return !s.empty() &&
-            find_if(s.begin(), s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
 void test_print_data_points(Dataset *data) {
@@ -61,26 +54,19 @@ void test_print_data_curves(Dataset *data){
     cout << data->getDimension() << " " << data->getSize() << endl;
 }
 
+void test_print_data(Dataset *data){
+    if(data->getHasVectors())
+        test_print_data_points(data);
+    else
+        test_print_data_curves(data);
+}
+
 double min(double coordinate,double min) {
     return coordinate < min ? coordinate : min;
 }
 
 double max(double coordinate,double max) {
     return coordinate > max ? coordinate : max;
-}
-
-void test_print_query_data(QueryDataset *data) {
-    auto objs = data->getData();
-    vector<Point *> points(objs.begin(),objs.end());
-    for (int i = 0; i < points.size(); i++) {
-        cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
-        auto coords = points[i]->getCoordinates();
-        for (int j = 0; j < coords.size(); ++j) {
-            cout << coords[j] << " ";
-        }
-        cout << endl;
-    }
-    cout << data->getDimension() << " " << data->getSize() << " " << data->getRadius() << endl;
 }
 
 int modulo(int a, int b){

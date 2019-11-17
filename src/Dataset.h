@@ -6,6 +6,7 @@ using namespace std;
 
 class Dataset {
     private:
+        bool hasVectors;
         //default to 2 for curves
         int dimension;
         size_t size;
@@ -13,7 +14,7 @@ class Dataset {
         double min;
         //maxLength of Curve for Curves - maxCoordinate for Points
         double max;
-        //unecessary for Curves
+        //unnecessary for Curves
         int mean;
         vector<Object *> data;
     public:
@@ -35,6 +36,8 @@ class Dataset {
         //max length for curves
         double getMax();
         int getMean();
+        void setHasVectors(bool hasVectors);
+        bool getHasVectors();
 };
 
 class QueryDataset : public Dataset {

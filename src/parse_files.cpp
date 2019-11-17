@@ -47,10 +47,10 @@ Dataset* parseFilePoints(string filename) {
     getline(inputFile, line);
     while(getline(inputFile, line)){
         //extract item_id
-        string item_id = line.substr(0, line.find(' '));
+        string item_id = line.substr(0, line.find_first_of("\t "));
         auto point = new Point(item_id);
         //keep only the coordinates
-        line = line.substr(line.find(' ') + 1);
+        line = line.substr(line.find_first_of("\t ") + 1);
         string token;
         stringstream line_stream(line);
         int dimension = 0;
@@ -69,6 +69,7 @@ Dataset* parseFilePoints(string filename) {
         size++;
         data->add(point);
     }
+    data->setHasVectors(true);
     data->setSize(size);
     data->setDimension(current_dimension);
     data->setMax(maxCoordinate);
@@ -126,7 +127,7 @@ Dataset* parseFileCurves(string filename) {
     getline(inputFile, line);
     while(getline(inputFile, line)){
         //extract item_id
-        string item_id = line.substr(0, line.find('\t'));
+        string item_id = line.substr(0, line.find_first_of("\t "));
         vector<Point> curveVec;
         line = line.substr(line.find_first_of("\t ") + 1);
         string token;
@@ -163,6 +164,7 @@ Dataset* parseFileCurves(string filename) {
         data->add(curve);
         size++;
     }
+    data->setHasVectors(false);
     data->setSize(size);
     data->setDimension(2);
     data->setMax(maxCurveLen);

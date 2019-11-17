@@ -52,6 +52,14 @@ int Dataset::getMean() {
     return mean;
 }
 
+void Dataset::setHasVectors(bool hasVectors) {
+    this->hasVectors = hasVectors;
+}
+
+bool Dataset::getHasVectors() {
+    return hasVectors;
+}
+
 double QueryDataset::getRadius() {
     return radius;
 }
