@@ -1,6 +1,7 @@
 #ifndef ALGORITHMS_PROJECT_CLUSTER_H
 #define ALGORITHMS_PROJECT_CLUSTER_H
 
+#include <set>
 #include "GeneralParameters.h"
 
 using namespace std;
@@ -10,6 +11,11 @@ private:
     GeneralParameters* gen_params;
 
     Dataset* data;
+
+    //current k-Means of Dataset
+    set<Object *> kMeans;
+
+
 public:
 
     GeneralParameters *getGeneralParameters() const {

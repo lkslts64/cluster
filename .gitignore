@@ -1,3 +1,4 @@
 build/*
 *.json
-.idea
+.idea/*
+cmake-build-debug/*

@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_CXX_STANDARD 14)
 add_compile_options(-fpermissive)
 #add_compile_options(-O3)
-#link_libraries(cunit)
+link_libraries(cunit)
 project (algorithms_project)
 
 add_executable(cluster

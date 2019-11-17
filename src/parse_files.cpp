@@ -134,9 +134,8 @@ Dataset* parseFileCurves(string filename) {
         stringstream line_stream(line);
         int curveLen;
         line_stream >> curveLen;
-        maxCurveLen = max(maxCurveLen,curveLen);
-        minCurveLen = min(minCurveLen,curveLen);
         line = line.substr(line.find_first_of("\t ") + 1);
+        vector<double> previousPointVec;
         while(line_stream >> token){
             //ensure the right format is given : (coordinate,coordinate)
             assert(token[0] == '(');
@@ -153,12 +152,18 @@ Dataset* parseFileCurves(string filename) {
             token = token.substr(coordinateSz);
             assert(token[0] == ')');
             token = token.substr(1);
+
+            //keep only unique points
+            if(previousPointVec.size() != 0
+            && previousPointVec.at(0) == pointVec.at(0)
+            && previousPointVec.at(1) == pointVec.at(1)){
+                continue;
+            }
+            previousPointVec = pointVec;
             curveVec.push_back((*new Point(pointVec)));
         }
-        if (curveLen != curveVec.size()) {
-            cout << "expected curve length doesn't match with actual curve length." << endl;
-            exit(-1);
-        }
+        maxCurveLen = max(maxCurveLen,curveVec.size());
+        minCurveLen = min(minCurveLen,curveVec.size());
         auto curve = new Curve(curveVec); 
         curve->setId(item_id);
         data->add(curve);
