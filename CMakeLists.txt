@@ -32,7 +32,7 @@ add_executable(cluster
         src/search.cpp
         src/search.h
         src/GeneralParameters.h
-        src/Cluster.cpp src/Cluster.h)
+        src/Cluster.cpp src/Cluster.h src/strategy.cpp)
 
 add_executable(lsh
         src/mainPointsLSH.cpp

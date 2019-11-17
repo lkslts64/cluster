@@ -1,29 +1,82 @@
-#ifndef STRAT_H
-#define STRAT_H
+#ifndef STRATEGY_H
+#define STRATEGY_H
 #include <random>
 #include <vector>
 #include "Object.h"
+#include "Cluster.h"
 
 using namespace std;
 
+class Strategy {
+protected:
+    Cluster* cluster;
+};
+
 //functors for initialization strategy
-class InitStrategy {
-    public:
-    virtual Object *operator() (vector<Object *> objs) = 0;
+class InitStrategy : public Strategy{
+public:
+    virtual void execute() = 0;
 };
 
-class RandStrategy : public InitStrategy {
-    public:
-    Object *operator() (vector<Object *> objs) {
-        random_device dev;
-        mt19937 rng(dev());
-        uniform_int_distribution<int> dist(0,objs.size()-1);
-        return objs.at(dist(rng));
+/**
+ * Randomly select k objects as centers
+ */
+class RandomInit : public InitStrategy {
+public:
+    RandomInit(Cluster* cluster){
+        this->cluster = cluster;
     }
+    void execute();
 };
 
-class SpreadOutStrategy : public InitStrategy {
-    //Instructor didn't explain it well so cant implement it yet.
+class SpreadOutInit : public InitStrategy {
+public:
+    SpreadOutInit(Cluster* cluster){
+        this->cluster = cluster;
+    }
+    void execute();
+};
+
+class AssignmentStrategy : public Strategy{
+public:
+    virtual void execute() = 0;
+};
+
+class LloydAssignment : public AssignmentStrategy{
+public:
+    LloydAssignment(Cluster* cluster){
+        this->cluster = cluster;
+    }
+    void execute();
+};
+
+class InverseAssignment : public AssignmentStrategy{
+public:
+    InverseAssignment(Cluster* cluster){
+        this->cluster = cluster;
+    }
+    void execute();
+};
+
+class UpdateStrategy : public Strategy {
+public:
+    virtual void execute() = 0;
+};
+
+class PAMUpdate : public UpdateStrategy{
+public:
+    PAMUpdate(Cluster* cluster){
+        this->cluster = cluster;
+    }
+    void execute();
+};
+
+class CentroidUpdate : public UpdateStrategy{
+public:
+    CentroidUpdate(Cluster* cluster){
+        this->cluster = cluster;
+    }
+    void execute();
 };
 
 

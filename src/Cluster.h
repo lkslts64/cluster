@@ -13,12 +13,11 @@ private:
     Dataset* data;
 
     //current k-Means of Dataset
-    set<Object *> kMeans;
-
+    set<Object *> k_means;
 
 public:
 
-    GeneralParameters *getGeneralParameters() const {
+    GeneralParameters *getGeneralParameters() {
         return gen_params;
     }
 
@@ -26,7 +25,7 @@ public:
         gen_params = genParams;
     }
 
-    Dataset *getDataset() const {
+    Dataset *getDataset() {
         return data;
     }
 
@@ -34,6 +33,13 @@ public:
         this->data = data;
     }
 
+    set<Object *> getKMeans() {
+        return k_means;
+    }
+
+    void setKMeans(set<Object *> kMeans) {
+        this->k_means = kMeans;
+    }
 };
 
 #endif //ALGORITHMS_PROJECT_CLUSTER_H

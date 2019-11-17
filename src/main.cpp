@@ -2,6 +2,7 @@
 #include "ui.h"
 #include "utils.h"
 #include "parse_files.h"
+#include "strategy.h"
 
 using namespace std;
 
@@ -11,15 +12,18 @@ int main(int argc, char* argv[]) {
 
     readArguments(cluster, argc, argv);
 
-    //put condition if the file is points or curves
     cluster->setData(parseFile(cluster->getGeneralParameters()->getInputFilename()));
-    test_print_data(cluster->getDataset());
+    //test_print_data(cluster->getDataset());
 
-    //for 8 combinations
-    {
-        //Initialization
+    auto init = new RandomInit(cluster);
+    auto assign = new LloydAssignment(cluster);
+    auto update = new PAMUpdate(cluster);
 
-        //Assignment & Update in a loop until
-    }
+    init->execute();
+    do{
+        assign->execute();
+        update->execute();
+    }while(0);
+
 
 }
