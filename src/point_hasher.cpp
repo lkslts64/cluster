@@ -7,11 +7,6 @@
 
 using namespace std;
 
-//TODO: set window size based on dataset (for better point grouping).
-//needs to be done inside lsh. We could set it based on some metrics e.g. 
-//based on the highest coordinate of a point and minimum (generally based 
-//on change-variation of points).
-
 PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;
     this->numDimension = numDimension;

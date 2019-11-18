@@ -16,10 +16,11 @@ int main(int argc, char* argv[]) {
     //test_print_data(cluster->getDataset());
 
     auto init = new RandomInit(cluster);
-    auto assign = new LloydAssignment(cluster);
+    auto assign = new InverseAssignment(cluster);
     auto update = new PAMUpdate(cluster);
 
     init->execute();
+    cluster->testPrintClusterKeysAndSize();
     do{
         assign->execute();
         update->execute();

@@ -40,12 +40,4 @@ class Dataset {
         bool getHasVectors();
 };
 
-class QueryDataset : public Dataset {
-private:
-    double radius = -1;
-public:
-    double getRadius();
-    void setRadius(double radius);
-};
-
 #endif //ALGORITHMS_PROJECT_DATASET_H

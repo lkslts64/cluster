@@ -56,11 +56,3 @@ PointHashTableStruct::PointHashTableStruct(int numOfHTs, int ampSize,int numDime
     hashers = vector<Hasher *> (h,h+numOfHTs);
 
 }
-
-CurveProjectionHashTableStruct::CurveProjectionHashTableStruct(int numOfHTs, int ampSize,int numDimension,int window, const vector<vector<double>>& normalMatrix, vector<tuple<int, int>> traversal) : HashTableStruct(numOfHTs) {
-    CurveProjectionHasher **h;
-    h = new CurveProjectionHasher*[numOfHTs];
-    for (int i = 0; i < numOfHTs; ++i)
-        h[i] = new CurveProjectionHasher(ampSize, numDimension, window, normalMatrix, traversal);
-    hashers = vector<Hasher *> (h, h+numOfHTs);
-}

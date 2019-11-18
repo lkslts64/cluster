@@ -59,11 +59,3 @@ void Dataset::setHasVectors(bool hasVectors) {
 bool Dataset::getHasVectors() {
     return hasVectors;
 }
-
-double QueryDataset::getRadius() {
-    return radius;
-}
-
-void QueryDataset::setRadius(double radius) {
-    this->radius = radius;
-}

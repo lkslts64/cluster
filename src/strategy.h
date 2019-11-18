@@ -4,6 +4,7 @@
 #include <vector>
 #include "Object.h"
 #include "Cluster.h"
+#include "LSH.h"
 
 using namespace std;
 
@@ -51,10 +52,11 @@ public:
 };
 
 class InverseAssignment : public AssignmentStrategy{
+private:
+    LSH* lsh;
+    bool hasVectors;
 public:
-    InverseAssignment(Cluster* cluster){
-        this->cluster = cluster;
-    }
+    InverseAssignment(Cluster* cluster);
     void execute();
 };
 

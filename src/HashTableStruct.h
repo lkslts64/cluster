@@ -42,9 +42,4 @@ class CurveHashTableStruct : public HashTableStruct {
     public:
         CurveHashTableStruct(int numOfHTs,int ampSize,int numDimension,double min,int max,int pointHasherWindow);
 };
-
-class CurveProjectionHashTableStruct : public HashTableStruct {
-public:
-    CurveProjectionHashTableStruct(int numOfHTs,int ampSize,int numDimension,int window,const vector<vector<double>>& normalMatrix, vector<tuple<int, int>> traversal);
-};
 #endif //ALGORITHMS_PROJECT_HASHTABLESTRUCT_H

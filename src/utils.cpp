@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 #include <vector>
 #include <iostream>
+#include <limits>
 #include "utils.h"
 #include "Curve.h"
 
@@ -30,6 +31,7 @@ bool file_exists(const char* filename){
 void test_print_data_points(Dataset *data) {
     auto objs = data->getData();
     vector<Point *> points(objs.begin(),objs.end());
+    cout.precision(numeric_limits<double>::max_digits10);
     for (int i = 0; i < points.size(); i++) {
         cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
         auto coords = points[i]->getCoordinates();
@@ -44,6 +46,7 @@ void test_print_data_points(Dataset *data) {
 void test_print_data_curves(Dataset *data){
     auto objs = data->getData();
     vector<Curve *> curves(objs.begin(),objs.end());
+    cout.precision(numeric_limits<double>::max_digits10);
     for(auto curve: curves){
         cout << "CHECKING ITEM ID: " << curve->getId() << endl;
         for(auto point: curve->getPoints()){
