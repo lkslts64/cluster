@@ -25,7 +25,9 @@ public:
     void setGeneralParameters(GeneralParameters *genParams) {gen_params = genParams;}
     Dataset *getDataset() {return data;}
     void setData(Dataset *data) {this->data = data;}
+    map<Object *, set<Object *>> getClusters() {return clusters;}
 
+    set<Object *> getCenters();
     void setCenters(const set<Object *>& centers);
     void testPrintClusterKeysAndSize();
 };

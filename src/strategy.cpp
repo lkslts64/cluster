@@ -1,5 +1,6 @@
 #include "strategy.h"
 #include "LSH.h"
+#include "utils.h"
 #include <limits>
 
 void RandomInit::execute() {
@@ -48,13 +49,23 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
 }
 
 void InverseAssignment::execute() {
+    //calculate initial radius = min(dist between centers)/2
+    auto metric = lsh->getMetric();
+    auto centers = cluster->getCenters();
+    double minDistance = minDistanceInSet(centers, metric);
+    double radius = minDistance / 2.0;
 
-    if(hasVectors) {
+    //keep hashes of centers
 
-    }
-    else{
-
-    }
+//    while(something){
+//        //for every center
+//            //for every hash table
+//                //keep the object if dist < radius
+//                //mark the already picked ones
+//
+//
+//        radius *= 2;
+//    }
 
 }
 

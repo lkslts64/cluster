@@ -35,7 +35,6 @@ add_executable(cluster
         src/Cluster.cpp src/Cluster.h src/strategy.cpp)
 
 add_executable(lsh
-        src/mainPointsLSH.cpp
         src/Curve.cpp
         src/Curve.h
         src/curve_hasher.cpp
@@ -62,7 +61,6 @@ add_executable(lsh
         src/Cluster.cpp src/Cluster.h)
 
 add_executable(curve_grid_lsh
-        src/curve_grid_lsh.cpp
         src/Curve.cpp
         src/Curve.h
         src/curve_hasher.cpp
@@ -99,7 +97,6 @@ add_executable(test_dba
 
 add_executable(test_curve_grid_lsh
         src/test_curve_grid_lsh.cpp
-        src/curve_grid_lsh.h
         src/Curve.cpp
         src/Curve.h
         src/curve_hasher.cpp
