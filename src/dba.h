@@ -39,7 +39,7 @@ struct point_compare {
 
 
 class DBA {
-    vector<Curve *> curves;
+    set<Object *> curves;
     //array of point sets
     int centroidLen;
     Curve * currCentroid;
@@ -51,7 +51,7 @@ class DBA {
     Curve *pickRandomFilterShort();
     Curve *pickRandomSubsequence(Curve *curve);
     public:
-        DBA(vector<Curve *> curves);
+        DBA(set<Object *> curves);
         Curve* run();
 };
 #endif

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "LSH.h"
 #include "utils.h"
+#include "dba.h"
 #include <limits>
 #include <algorithm>
 
@@ -72,5 +73,28 @@ void PAMUpdate::execute() {
 }
 
 void CentroidUpdate::execute() {
+    auto objs = cluster->getDataset();
+    auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
 
+    set<Object *> centroids;
+    if (objs->getHasVectors()) {
+        for (auto clust : cluster->getClusters()) {
+            double clusterSize = double(clust.second.size());
+            vector<double> centroid(objs->getDimension(),0.0);
+            for (auto obj : clust.second) {
+                auto p = dynamic_cast<Point *>(obj);
+                for (int i =0; i < p->getCoordinates().size();i++) {
+                    centroid.at(i) += p->getCoordinate(i)/clusterSize;
+                }
+            }
+            centroids.insert(new Point(centroid));
+            centroid.clear();
+        }
+    } else {
+        for (auto clust : cluster->getClusters()) {
+            auto dba = new DBA(clust.second);
+            auto centroid = dba->run();
+            centroids.insert(centroid);
+        }
+    }
 }
