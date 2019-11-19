@@ -14,14 +14,16 @@ int main(int argc, char* argv[]) {
 
     InitStrategy* init = new RandomInit(cluster);
     AssignmentStrategy* assign = new InverseAssignment(cluster);
-    UpdateStrategy* update = new PAMUpdate(cluster);
-
+    UpdateStrategy* update = new CentroidUpdate(cluster);
     init->execute();
     cluster->testPrintClusterKeysAndSize();
+    int count = 0;
     do{
         assign->execute();
-        update->execute();
-    }while(0);
+        if (update->execute()) 
+            break;
+        count++;
+    }while(count < 5);
     cluster->output("Algorithm: Ι1A2U1");
     //TODO: clear cluster to use it again
     delete init; delete assign; delete update;
