@@ -17,6 +17,7 @@ set<Object *> Cluster::getCenters() {
 }
 
 void Cluster::setCenters(const set<Object *>& centers) {
+    clusters.clear();
     for(auto center : centers)
         clusters[center];
 }
@@ -37,10 +38,10 @@ vector<double> Cluster::getSilhouette(){
         double s = 0;
         for(auto obj : cluster.second){
             double a=0,b=0;
+            //calculate averageDistance1
             for(auto obj2 : cluster.second)
                 if(obj!=obj2)
-                    a += metric->dist(obj,obj2);
-            a = a / double(cluster.second.size() - 1);
+                    a += metric->dist(obj,obj2) / double(cluster.second.size() - 1);
             //find second nearest cluster
             pair<Object *,set<Object *>> secondCluster;
             double minDist = numeric_limits<double>::max();
@@ -53,9 +54,9 @@ vector<double> Cluster::getSilhouette(){
                     }
                 }
             }
+            //calculate averageDistance2
             for(auto obj2 : secondCluster.second)
-                b += metric->dist(obj,obj2);
-            b = b / double(secondCluster.second.size());
+                b += metric->dist(obj,obj2) / double(secondCluster.second.size());
 
             s += (b-a)/max(a,b);
         }
@@ -97,6 +98,4 @@ void Cluster::output(string firstLine) {
             i++;
         }
     }
-
-
 }

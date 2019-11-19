@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
         if (update->execute()) 
             break;
         count++;
-    }while(count < 5);
+    }while(count--);
     cluster->output("Algorithm: Ι1A2U1");
     //TODO: clear cluster to use it again
     delete init; delete assign; delete update;
