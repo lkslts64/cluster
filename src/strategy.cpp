@@ -101,7 +101,7 @@ void CentroidUpdate::execute() {
                 }
             }
             centroids.insert(new Point(centroid));
-            centroid.clear();
+            //centroid.clear();
         }
     } else {
         for (auto clust : cluster->getClusters()) {
@@ -110,4 +110,5 @@ void CentroidUpdate::execute() {
             centroids.insert(centroid);
         }
     }
+    cluster->setCenters(centroids);
 }
