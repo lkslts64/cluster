@@ -17,6 +17,8 @@ class Kmeans {
     Kmeans(set<Object *> objs,double stopThreshold) {
         this->objs = objs;
         this->stopThreshold = stopThreshold;
+        this->currCentroid = nullptr;
+        this->prevCentroid = nullptr;
     }
     bool canStop() {
         if (prevCentroid == nullptr)
