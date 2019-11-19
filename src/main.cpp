@@ -17,13 +17,18 @@ int main(int argc, char* argv[]) {
     UpdateStrategy* update = new CentroidUpdate(cluster);
     init->execute();
     cluster->testPrintClusterKeysAndSize();
-    int count = 0;
+    int count = 6;
     do{
         assign->execute();
-        if (update->execute()) 
+        //cout <<count<< endl;
+        if (update->execute())  {
+            cout << "update break!" << endl;
             break;
-        count++;
-    }while(count--);
+        }
+    }while(count-- > 0);
+    //a last assignment is mandatory.
+    //otherwise clusters map has no values
+    assign->execute();
     cluster->output("Algorithm: Ι1A2U1");
     //TODO: clear cluster to use it again
     delete init; delete assign; delete update;
