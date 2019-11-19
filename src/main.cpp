@@ -7,17 +7,14 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
     auto cluster = new Cluster();
-
     readArguments(cluster, argc, argv);
-
     cluster->setData(parseFile(cluster->getGeneralParameters()->getInputFilename()));
     //test_print_data(cluster->getDataset());
 
-    auto init = new RandomInit(cluster);
-    auto assign = new InverseAssignment(cluster);
-    auto update = new PAMUpdate(cluster);
+    InitStrategy* init = new RandomInit(cluster);
+    AssignmentStrategy* assign = new InverseAssignment(cluster);
+    UpdateStrategy* update = new PAMUpdate(cluster);
 
     init->execute();
     cluster->testPrintClusterKeysAndSize();
@@ -25,6 +22,12 @@ int main(int argc, char* argv[]) {
         assign->execute();
         update->execute();
     }while(0);
+    cluster->output("Algorithm: Ι1A2U1");
+    //TODO: clear cluster to use it again
+    delete init; delete assign; delete update;
 
+    init = new RandomInit(cluster);
+    assign = new LloydAssignment(cluster);
+    update = new PAMUpdate(cluster);
 
 }
