@@ -30,7 +30,7 @@ public:
     set<Object *> getCenters();
     void setCenters(const set<Object *>& centers);
     void testPrintClusterKeysAndSize();
-
+    vector<double> getSilhouette();
     void output(string firstLine);
 };
 
