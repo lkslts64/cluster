@@ -1,5 +1,5 @@
 #define private public
-#include "dba.h"
+#include "kmeans.h"
 #include "distance.h"
 #include <iostream>
 #include "CUnit/CUnit.h"
@@ -30,8 +30,10 @@ void test_DBA() {
    curves.insert(curv2);
    curves.insert(curv3);
    curves.insert(curv4);
-   auto dba = new DBA(curves);
-   auto res = dba->run();
+   auto dba = new DBA(curves,1);
+   bool stop;
+   auto obj = dba->centroid(&stop);
+   auto res = dynamic_cast<Curve *>(obj);
    auto points = res->getPoints();
    CU_ASSERT(points.size() == 2);
    //check if we get the mean of values for every coordinate
@@ -41,6 +43,19 @@ void test_DBA() {
    CU_ASSERT(points.at(0).getCoordinate(1) == 37);
    CU_ASSERT(points.at(1).getCoordinate(0) == -1.25);
    CU_ASSERT(points.at(1).getCoordinate(1) == 5);
+}
+
+void test_KmeansPoints() {
+   auto p1 = new Point(vector<double> {2,1});
+   auto p2 = new Point(vector<double> {-6,9});
+   auto p3 = new Point(vector<double> {-5,5});
+   set<Object *> pset {p1,p2,p3};
+   auto kmeans = new KmeansPoints(pset,1.0,2);
+   bool stop;
+   auto obj = kmeans->centroid(&stop);
+   auto res = dynamic_cast<Point *>(obj);
+   CU_ASSERT(res->getCoordinate(0) == -3);
+   CU_ASSERT(res->getCoordinate(1) == 5);
 }
 
 int init_suite1(void) { return 0; }
@@ -56,7 +71,8 @@ int main(int argc,char *argv[]) {
       CU_cleanup_registry();
       return CU_get_error();
    }
-   if ((NULL == CU_add_test(pSuite, "test of DBA",test_DBA))) 
+   if ((NULL == CU_add_test(pSuite, "test of DBA",test_DBA)) ||  
+      ((NULL == CU_add_test(pSuite, "test of kmeans points",test_KmeansPoints))))
          {
          CU_cleanup_registry();
       return CU_get_error();

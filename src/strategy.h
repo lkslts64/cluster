@@ -82,7 +82,7 @@ public:
 
 class UpdateStrategy : public Strategy {
 public:
-    virtual void execute() = 0;
+    virtual bool execute() = 0;
 };
 
 class PAMUpdate : public UpdateStrategy{
@@ -90,7 +90,7 @@ public:
     PAMUpdate(Cluster* cluster){
         this->cluster = cluster;
     }
-    void execute();
+    bool execute();
 };
 
 class CentroidUpdate : public UpdateStrategy{
@@ -98,7 +98,7 @@ public:
     CentroidUpdate(Cluster* cluster){
         this->cluster = cluster;
     }
-    void execute();
+    bool execute();
 };
 
 

@@ -2,9 +2,11 @@
 #include "utils.h"
 #include "LSH.h"
 #include "utils.h"
-#include "dba.h"
+#include "kmeans.h"
 #include <limits>
 #include <algorithm>
+#define DBA_THRESHOLD 1
+#define KMEANS_THRESHOLD 0.5
 
 void RandomInit::execute() {
     auto objs = cluster->getDataset()->getData();
@@ -81,34 +83,31 @@ void InverseAssignment::execute() {
 
 }
 
-void PAMUpdate::execute() {
+bool PAMUpdate::execute() {
 
 }
 
-void CentroidUpdate::execute() {
+bool CentroidUpdate::execute() {
     auto objs = cluster->getDataset();
     auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
 
+    bool stop;
+    int stopCount = 0;
+    Object *centroid;
     set<Object *> centroids;
-    if (objs->getHasVectors()) {
-        for (auto clust : cluster->getClusters()) {
-            double clusterSize = double(clust.second.size());
-            vector<double> centroid(objs->getDimension(),0.0);
-            for (auto obj : clust.second) {
-                auto p = dynamic_cast<Point *>(obj);
-                for (int i =0; i < p->getCoordinates().size();i++) {
-                    centroid.at(i) += p->getCoordinate(i)/clusterSize;
-                }
-            }
-            centroids.insert(new Point(centroid));
-            //centroid.clear();
-        }
-    } else {
-        for (auto clust : cluster->getClusters()) {
-            auto dba = new DBA(clust.second);
-            auto centroid = dba->run();
-            centroids.insert(centroid);
-        }
+    Kmeans *algo;
+    for (auto clust : cluster->getClusters()) {
+        if (objs->getHasVectors()) 
+            algo = new KmeansPoints(clust.second,KMEANS_THRESHOLD,objs->getDimension());
+        else 
+            algo = new DBA(clust.second,DBA_THRESHOLD);
+        centroid = algo->centroid(&stop);
+        if (stop) 
+            stopCount++;
+        centroids.insert(centroid);
     }
     cluster->setCenters(centroids);
+    //we should stop if all centroids didn't change too much from the
+    //previous update
+    return stopCount == numClusters;
 }

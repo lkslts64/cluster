@@ -1,41 +1,39 @@
 #include <random>
 #include <assert.h>
-#include "dba.h"
+#include "kmeans.h"
 #include "distance.h"
 
 using namespace std;
 
-DBA::DBA(set<Object *> curves) {
-    this->curves = curves;
+DBA::DBA(set<Object *> curves,double stopThreshold) : Kmeans(curves,stopThreshold) {
     centroidLen = meanLength();
     currCentroid = pickRandomFilterShort();
+    this->metric = new DTW();
 }
 
-Curve *DBA::run() {
-    auto dtw = new DTW();
+Object *DBA::centroid(bool *stop) {
     vector<set<Point,point_compare>> psetVec;
     vector<Point> pvec;
-    while (prevCentroid == nullptr || //first iteration case
-     dtw->dist(currCentroid,prevCentroid) > endDistThreshold) {
-        prevCentroid = currCentroid;
-        for (int i = 0; i < centroidLen; i++)
-            psetVec.push_back(set<Point,point_compare>());
-        auto ipairs = vector<struct IndexPairs>();
-        for (auto obj : curves) {
-            auto c = dynamic_cast<Curve *>(obj); 
-            dtw->distWithIndexPairs(c,prevCentroid,&ipairs);
-            for (auto pair : ipairs) {
-                psetVec.at(pair.p1).insert(c->getPoint(pair.p2));
-            }
+    auto dtw = dynamic_cast<DTW *>(metric);
+    prevCentroid = currCentroid;
+    for (int i = 0; i < centroidLen; i++)
+        psetVec.push_back(set<Point,point_compare>());
+    auto ipairs = vector<struct IndexPairs>();
+    for (auto obj : objs) {
+        auto c = dynamic_cast<Curve *>(obj); 
+        dtw->distWithIndexPairs(c,prevCentroid,&ipairs);
+        for (auto pair : ipairs) {
+            psetVec.at(pair.p1).insert(c->getPoint(pair.p2));
         }
-        for (int i =0; i < centroidLen; i++) {
-            pvec.push_back(mean(psetVec.at(i)));
-        }
-        currCentroid = new Curve(pvec);
-        ipairs.clear();
-        psetVec.clear();
-        pvec.clear();
     }
+    for (int i =0; i < centroidLen; i++) {
+        pvec.push_back(mean(psetVec.at(i)));
+    }
+    currCentroid = new Curve(pvec);
+    *stop = canStop();
+    ipairs.clear();
+    psetVec.clear();
+    pvec.clear();
     return currCentroid;
 }
 
@@ -55,11 +53,11 @@ Point DBA::mean(set<Point,point_compare> pset) {
 
 int DBA::meanLength() {
     int sum = 0;
-    for (auto obj: curves) {
+    for (auto obj: objs) {
         auto c = dynamic_cast<Curve *>(obj); 
         sum += c->getPoints().size();
     }
-    return sum / curves.size();
+    return sum / objs.size();
 }
 
 //pick a random curve with length > centroidLen
@@ -67,11 +65,11 @@ int DBA::meanLength() {
 Curve *DBA::pickRandomFilterShort() {
     random_device dev;
     mt19937 rng(dev());
-    uniform_int_distribution<int> curveDist(0,curves.size()-1);
+    uniform_int_distribution<int> curveDist(0,objs.size()-1);
     //TODO:transform set-> vector so we can index it.
     //this is very costly assuming the set will 
     //many curves.
-    vector<Curve *> _curves (curves.begin(),curves.end());
+    vector<Curve *> _curves (objs.begin(),objs.end());
     while (true) {
         auto i = curveDist(rng);
         if (_curves[i]->getPoints().size() >= centroidLen)

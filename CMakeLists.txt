@@ -14,7 +14,8 @@ add_executable(cluster
         src/curve_hasher.cpp
         src/Dataset.cpp
         src/Dataset.h
-        src/dba.h src/dba.cpp
+        src/dba.cpp
+        src/kmeans.h
         src/distance.h
         src/distance.cpp
         src/hasher.h
@@ -36,10 +37,13 @@ add_executable(cluster
         src/GeneralParameters.h
         src/Cluster.cpp src/Cluster.h src/strategy.cpp)
 
-add_executable(test_dba
-        src/test_dba.cpp
+add_executable(test_kmeans
+        src/test_kmeans.cpp
         src/strategy.h
-        src/dba.h src/dba.cpp 
+        src/Dataset.cpp
+        src/Dataset.h
+        src/dba.cpp 
+        src/kmeans.h 
         src/Curve.h src/Curve.cpp
         src/Point.h src/Point.cpp
         src/distance.h src/distance.cpp
