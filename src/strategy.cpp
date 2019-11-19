@@ -29,6 +29,7 @@ void LloydAssignment::execute() {
 InverseAssignment::InverseAssignment(Cluster* cluster) {
     this->cluster = cluster;
     this->hasVectors = cluster->getDataset()->getHasVectors();
+    auto numOfGrids = cluster->getGeneralParameters()->getNumOfGrids();
     auto numOfHTs = cluster->getGeneralParameters()->getNumOfVectorHashTables();
     auto numOfHFs = cluster->getGeneralParameters()->getNumOfVectorHashFunctions();
     auto dimension = cluster->getDataset()->getDimension();
@@ -39,7 +40,7 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
     } else {
         lsh = new LSH(new DTW);
         //TODO: window... and min
-        lsh->setHashTableStruct(new CurveHashTableStruct(numOfHTs, numOfHFs, dimension, 0.000002, cluster->getDataset()->getMax(),2));
+        lsh->setHashTableStruct(new CurveHashTableStruct(numOfGrids, numOfHFs, dimension, 0.000002, cluster->getDataset()->getMax(),2));
     }
     auto data = cluster->getDataset()->getData();
     for (auto & obj : data)
@@ -51,20 +52,32 @@ void InverseAssignment::execute() {
     //calculate initial radius = min(dist between centers)/2
     auto metric = lsh->getMetric();
     auto centers = cluster->getCenters();
-    double minDistance = minDistanceInSet(centers, metric);
-    double radius = minDistance / 2.0;
+//    double minDistance = minDistanceInSet(centers, metric);
+//    double radius = minDistance / 2.0;
+//    cout << minDistance << endl;
 
-    //keep hashes of centers
+    auto hashers = lsh->getHashTableStruct()->getHashers();
+    auto hts = lsh->getHashTableStruct()->getAllHashTables();
 
-//    while(something){
-//        //for every center
-//            //for every hash table
-//                //keep the object if dist < radius
-//                //mark the already picked ones
-//
-//
-//        radius *= 2;
-//    }
+    auto data = cluster->getDataset()->getData();
+
+    //TODO: Optimization before brute-force (use LSH):
+    // For every center, assign to it every object that is on the same bucket
+    // In case that there are over 1 centers for the same object, select the min distance
+
+    //assign every object to a center (brute-force)
+    for(auto obj : data){
+        Object * minCenter;
+        double minDistance = numeric_limits<double>::max();
+        for (auto center : centers) {
+            double dist = metric->dist(obj, center);
+            if(dist < minDistance){
+                minDistance = dist;
+                minCenter = center;
+            }
+        }
+        cluster->addToCluster(minCenter, obj);
+    }
 
 }
 

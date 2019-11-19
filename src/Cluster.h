@@ -26,10 +26,12 @@ public:
     Dataset *getDataset() {return data;}
     void setData(Dataset *data) {this->data = data;}
     map<Object *, set<Object *>> getClusters() {return clusters;}
-
+    void addToCluster(Object * center, Object * obj);
     set<Object *> getCenters();
     void setCenters(const set<Object *>& centers);
     void testPrintClusterKeysAndSize();
+    vector<double> getSilhouette();
+    void output(string firstLine);
 };
 
 #endif //ALGORITHMS_PROJECT_CLUSTER_H
