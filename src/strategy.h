@@ -4,6 +4,7 @@
 #include <vector>
 #include "Object.h"
 #include "Cluster.h"
+#include "Dataset.h"
 #include "LSH.h"
 
 using namespace std;
@@ -31,10 +32,29 @@ public:
 };
 
 class SpreadOutInit : public InitStrategy {
+    set<Object *> centers;
+    //index of each center is dataset vector
+    set<int> centersIndex;
+    DistanceMetric *metric;
 public:
     SpreadOutInit(Cluster* cluster){
         this->cluster = cluster;
+        if(cluster->getDataset()->getHasVectors()) 
+            this->metric = new Manhattan();
+        else 
+            this->metric = new DTW();
     }
+    SpreadOutInit(bool hasVectors) {
+        if(hasVectors) 
+            this->metric = new Manhattan();
+        else 
+            this->metric = new DTW();
+
+    }
+    set<Object *> getCenters() { return centers; }
+    void init(vector<Object *> objs);
+    int search(vector<double> distArr,double x);
+    void _execute(vector<Object *> objs,int numClusters);
     void execute();
 };
 

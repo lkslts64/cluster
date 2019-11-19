@@ -1,6 +1,8 @@
 #include "strategy.h"
+#include "utils.h"
 #include "LSH.h"
 #include <limits>
+#include <algorithm>
 
 void RandomInit::execute() {
     auto objs = cluster->getDataset()->getData();
@@ -16,10 +18,6 @@ void RandomInit::execute() {
         centers.insert(objectToInsert);
     }
     cluster->setCenters(centers);
-}
-
-void SpreadOutInit::execute() {
-
 }
 
 void LloydAssignment::execute() {

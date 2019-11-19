@@ -77,3 +77,28 @@ int modulo(int a, int b){
         return a%b;
     return a%b + b;
 }
+
+//returs min distance of target with objs and
+//sets closest as the Object that was closer 
+//to target.
+double minDist(DistanceMetric *metric,Object *target,
+    set<Object*> objs, Object *closest) {
+        double min = numeric_limits<double>::max();
+        double dist;
+        for (auto obj: objs) {
+            if ((dist = metric->dist(obj,target)) < min) {
+                min = dist;
+                closest = obj; 
+            }
+        }
+        return min;
+}
+
+double minVec(vector<double> vec) {
+    double min = numeric_limits<double>::max();
+    for (auto v : vec) {
+        if (v < min)
+            min = v;
+    }
+    return min;
+}
