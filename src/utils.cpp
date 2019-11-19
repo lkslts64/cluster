@@ -102,3 +102,18 @@ double minVec(vector<double> vec) {
     }
     return min;
 }
+
+double minDistanceInSet(set<Object *> objs, DistanceMetric* metric){
+    double min = numeric_limits<double>::max();
+    for(auto obj : objs){
+        for(auto obj2 : objs){
+            auto distance = metric->dist(obj, obj2);
+            cout << distance << endl;
+            if(distance == 0)//same object
+                continue;
+            if(distance < min)
+                min = distance;
+        }
+    }
+    return min;
+}

@@ -1,7 +1,7 @@
 #include <string>
 #include <set>
-#include "distance.h"
 #include "Dataset.h"
+#include "distance.h"
 
 using namespace std;
 
@@ -13,3 +13,4 @@ int modulo(int a, int b);
 void test_print_data(Dataset *data);
 double minDist(DistanceMetric *metric,Object *target, set<Object*> objs, Object *closest = nullptr);
 double minVec(vector<double> vec);
+double minDistanceInSet(set<Object *>, DistanceMetric*);
