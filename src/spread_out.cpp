@@ -8,6 +8,7 @@ void SpreadOutInit::execute() {
     auto objs = cluster->getDataset()->getData();
     auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
     _execute(objs,numClusters);
+    cluster->setCenters(this->centers);
 }
 
 

@@ -14,6 +14,7 @@ add_executable(cluster
         src/curve_hasher.cpp
         src/Dataset.cpp
         src/Dataset.h
+        src/dba.h src/dba.cpp
         src/distance.h
         src/distance.cpp
         src/hasher.h

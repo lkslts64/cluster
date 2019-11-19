@@ -25,11 +25,11 @@ void test_DBA() {
    CU_ASSERT(dist > 7 && dist < 8);
    auto curv3 = new Curve(pointVec3);
    auto curv4 = new Curve(pointVec4);
-   auto curves = vector<Curve *>();
-   curves.push_back(curv1);
-   curves.push_back(curv2);
-   curves.push_back(curv3);
-   curves.push_back(curv4);
+   auto curves = set<Object *>();
+   curves.insert(curv1);
+   curves.insert(curv2);
+   curves.insert(curv3);
+   curves.insert(curv4);
    auto dba = new DBA(curves);
    auto res = dba->run();
    auto points = res->getPoints();
