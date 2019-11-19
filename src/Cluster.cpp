@@ -17,6 +17,7 @@ set<Object *> Cluster::getCenters() {
 }
 
 void Cluster::setCenters(const set<Object *>& centers) {
+    clusters.clear();
     for(auto center : centers)
         clusters[center];
 }
