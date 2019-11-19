@@ -15,7 +15,7 @@ Curve *DBA::run() {
     auto dtw = new DTW();
     vector<set<Point,point_compare>> psetVec;
     vector<Point> pvec;
-    while (prevCentroid == nullptr ||
+    while (prevCentroid == nullptr || //first iteration case
      dtw->dist(currCentroid,prevCentroid) > endDistThreshold) {
         prevCentroid = currCentroid;
         for (int i = 0; i < centroidLen; i++)

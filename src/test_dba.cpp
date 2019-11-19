@@ -1,5 +1,6 @@
 #define private public
 #include "dba.h"
+#include "distance.h"
 #include <iostream>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
@@ -19,6 +20,9 @@ void test_DBA() {
    (*new Point(vector<double> {-6,9}))};
    auto curv1 = new Curve(pointVec);
    auto curv2 = new Curve(pointVec2);
+   auto dtw = new DTW();
+   auto dist = dtw->dist(curv1,curv2);
+   CU_ASSERT(dist > 7 && dist < 8);
    auto curv3 = new Curve(pointVec3);
    auto curv4 = new Curve(pointVec4);
    auto curves = vector<Curve *>();

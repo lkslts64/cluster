@@ -51,7 +51,6 @@ public:
     void setHashTableStruct(HashTableStruct *ht) {
         tables = ht;
     }
-
 };
 
 #endif //ALGORITHMS_PROJECT_LSH_H
