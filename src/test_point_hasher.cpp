@@ -63,82 +63,6 @@ void test_Determinism(void) {
          CU_FAIL("test determinism failed!");
 }
 
-void test_HashAmplified(void) {
-   //first dataset (kostis)
-   lsh = new LSH(new Manhattan());
-   //all points are around 0-120 approx
-   lsh->setInputFilename("../src/very_small_input_for_testing");
-   lsh->setData(parseFilePoints(lsh->getInputFilename()));
-   auto dataset = lsh->getDataset();
-   auto numDim = dataset->getDimension();
-   auto points = dataset->getData();
-   printf("mean is %d",dataset->getMean());
-   //printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate());
-   //because the window is bigger than the biggest coordinate of a
-   // data point (131), all points should lie on the same bucket. 
-   //reset pool - we have another dataset, we reconstruct the pool.
-   //auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
-   auto phasher = new PointHasher(4,numDim,dataset->getMax()+1);
-   printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
-   set<size_t> uniqueBuckets;
-   /*for (auto p: points) {
-      uniqueBuckets.insert((*phasher)(p));
-   }*/
-   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
-   CU_ASSERT(uniqueBuckets.size() > 1);
-   //second dataset (instructor's)
-   lsh = new LSH(new Manhattan());
-   lsh->setInputFilename("../src/testdata/input_small_id");
-   lsh->setData(parseFilePoints(lsh->getInputFilename()));
-   dataset = lsh->getDataset();
-   numDim = dataset->getDimension();
-   points = dataset->getData();
-   printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
-   printf("mean is %d",dataset->getMean());
-   set<size_t> uniqueBuckets2;
-   //reset pool - we have another dataset, we reconstruct the pool.
-   //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,4000);
-   int i = 0;
-   for (auto p: points) {
-      auto bucket = (*phasher)(p);
-      uniqueBuckets2.insert(bucket);
-      i++;
-   }
-   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets2.size(),dataset->getSize());
-}
-
-void test_MultipleHashers(){
-   lsh = new LSH(new Manhattan());
-   lsh->setInputFilename("../src/testdata/input_small_id");
-   lsh->setData(parseFilePoints(lsh->getInputFilename()));
-   auto dataset = lsh->getDataset();
-   auto numDim = dataset->getDimension();
-   auto points = dataset->getData();
-   auto numTables = 5;
-   //vector<PointHasher > hashers (numTables,(*new PointHasher(4,numDim,20)));
-   PointHasher **hashers; 
-   hashers = new PointHasher*[numTables];
-   for (int i =0; i < numTables; i++) 
-      hashers[i] = new PointHasher(4,numDim,4000);
-   auto equalHashesSum = 0;
-   set<size_t> uniqueBuckets;
-   for (auto p : dataset->getData()){
-      auto bucket0 = (*hashers[0])(p);
-      auto bucket1 = (*hashers[1])(p);  
-      auto bucket2 = (*hashers[2])(p);  
-      auto bucket3 = (*hashers[3])(p);  
-      uniqueBuckets.insert(bucket0);
-      uniqueBuckets.insert(bucket1);
-      uniqueBuckets.insert(bucket2);
-      uniqueBuckets.insert(bucket3);
-      if ((bucket0 == bucket1) && (bucket2== bucket3) && (bucket3== bucket2))
-         equalHashesSum++;
-   }
-   CU_ASSERT(equalHashesSum < 100);
-   cout << "bucket unique " << uniqueBuckets.size() << endl;
-}
-
 int init_suite1(void)
 {
    if (NULL == (temp_file = fopen("testPoinHasher.txt", "w+"))) {
@@ -175,10 +99,8 @@ int main(int argc,char *argv[]) {
    }
    if ((NULL == CU_add_test(pSuite, "test of PointHasher constructor", test_PointHasher))||
        (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)) || 
-       (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)) ||  
        (NULL == CU_add_test(pSuite,"test determinism",test_Determinism)) ||
-       (NULL == CU_add_test(pSuite,"test mean of mins",test_meanOfMins)) || 
-       (NULL == CU_add_test(pSuite,"test multiple hashes",test_MultipleHashers))) 
+       (NULL == CU_add_test(pSuite,"test mean of mins",test_meanOfMins)))
          {
          CU_cleanup_registry();
       return CU_get_error();

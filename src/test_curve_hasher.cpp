@@ -161,29 +161,6 @@ void test_Hash() {
    runHasher(numCurves,curveLen,curveLen,4000,curveVec,&bucketRes,&vectoriseRes);
    printf("results: points = %d, buckets = %d\n",vectoriseRes,bucketRes);
    CU_ASSERT(bucketRes < numCurves/100);
-   //create further test similar with test1
-   //test 2...
-   //conclusion: when t < 0.2, we have more than 2 unique points after 
-   //vectorize
-   auto lsh = new LSH(new DTW());
-   lsh->setInputFilename("../src/testdata/trajectories_input_small");
-   lsh->setData(parseFileCurves(lsh->getInputFilename()));
-   lsh->setNumOfFunctions(4);
-   lsh->setNumOfHashTables(5);
-   int bucketRes2, vectoriseRes2;
-   auto dataset = lsh->getDataset();
-    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),0.002,dataset->getMax(),1);
-    set<size_t> buckets;
-    set<Point,point_compare> pointSet;
-    for (auto c : dataset->getData()) {
-        auto curve = dynamic_cast<Curve *>(c);
-        chasher->pad(curve);
-        auto point = chasher->vectorize(chasher->snap(curve));
-        pointSet.insert(*point);
-        bucket = (*chasher)(curve);
-        buckets.insert(bucket);
-    }
-   printf("results: points = %d, buckets = %d\n",pointSet.size(),buckets.size());
 }
 
 void test_Padding() {
