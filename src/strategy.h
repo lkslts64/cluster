@@ -12,6 +12,8 @@ using namespace std;
 class Strategy {
 protected:
     Cluster* cluster;
+public:
+    virtual ~Strategy(){}
 };
 
 //functors for initialization strategy
@@ -77,6 +79,7 @@ private:
     bool hasVectors;
 public:
     InverseAssignment(Cluster* cluster);
+    ~InverseAssignment();
     void execute();
 };
 
