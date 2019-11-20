@@ -24,8 +24,29 @@ void RandomInit::execute() {
     cluster->setCenters(centers);
 }
 
+LloydAssignment::LloydAssignment(Cluster* cluster){
+    this->cluster = cluster;
+    if(cluster->getDataset()->getHasVectors())
+        metric = new Manhattan;
+    else
+        metric = new DTW;
+}
 void LloydAssignment::execute() {
-
+    auto centers = cluster->getCenters();
+    auto data = cluster->getDataset()->getData();
+    //assign every object to the nearest center (brute-force)
+    for(auto obj : data){
+        Object * minCenter;
+        double minDistance = numeric_limits<double>::max();
+        for (auto center : centers) {
+            double dist = metric->dist(obj, center);
+            if(dist < minDistance){
+                minDistance = dist;
+                minCenter = center;
+            }
+        }
+        cluster->addToCluster(minCenter, obj);
+    }
 }
 
 InverseAssignment::InverseAssignment(Cluster* cluster) {
@@ -49,30 +70,65 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
         lsh->getHashTableStruct()->addToAllHashTables(obj);
     //lsh->getHashTableStruct()->test_print_hashtable();
 }
-
 InverseAssignment::~InverseAssignment(){
     delete lsh;
 }
-
 void InverseAssignment::execute() {
     //calculate initial radius = min(dist between centers)/2
     auto metric = lsh->getMetric();
     auto centers = cluster->getCenters();
-//    double minDistance = minDistanceInSet(centers, metric);
-//    double radius = minDistance / 2.0;
-//    cout << minDistance << endl;
-
     auto hashers = lsh->getHashTableStruct()->getHashers();
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
-
+    auto numOfHTs = lsh->getHashTableStruct()->getNumOfHTs();
     auto data = cluster->getDataset()->getData();
+    //array that tells if a point/curve has been assigned to a center
+    vector<bool> isAssigned;
+    for(auto obj : data){
+        isAssigned.push_back(false);
+    }
 
-    //TODO: Optimization before brute-force (use LSH):
+    // Optimization before brute-force (use LSH):
     // For every center, assign to it every object that is on the same bucket
     // In case that there are over 1 centers for the same object, select the min distance
+    for(auto center : centers){
+        set<Object *> centersInSameBucket;
+        //find centers that are in the same bucket
+        for(auto center2 : centers){
+            for(int i = 0; i < numOfHTs ; i++){
+                if((*hashers.at(i))(center) == (*hashers.at(i))(center2)) {
+                    centersInSameBucket.insert(center2);
+                }
+            }
+        }
 
-    //assign every object to a center (brute-force)
+        for(int i = 0; i < numOfHTs ; i++){
+            int hash = (*hashers.at(i))(center);
+            if(hts[i].find(hash) == hts[i].end()) //empty bucket
+                continue;
+            auto points = hts[i].at(hash);
+            for(auto point : points){
+                Object * minCenter;
+                double minDistance = numeric_limits<double>::max();
+                for (auto candidateCenter : centersInSameBucket) {
+                    double dist = metric->dist(point, candidateCenter);
+                    if(dist < minDistance){
+                        minDistance = dist;
+                        minCenter = candidateCenter;
+                    }
+                }
+
+                isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), point))) = true;
+
+                cluster->addToCluster(minCenter, point);
+            }
+        }
+    }
+
+    //assign every remaining object to the nearest center (brute-force)
+    int i = 0;
     for(auto obj : data){
+        if(isAssigned.at(i))
+            continue;
         Object * minCenter;
         double minDistance = numeric_limits<double>::max();
         for (auto center : centers) {
@@ -83,12 +139,41 @@ void InverseAssignment::execute() {
             }
         }
         cluster->addToCluster(minCenter, obj);
+        i++;
     }
 
 }
 
+//find the best centroid for each cluster
+//based on minimizing the sum of distances to the center
 bool PAMUpdate::execute() {
-
+    DistanceMetric* metric;
+    if(cluster->getDataset()->getHasVectors())
+        metric = new Manhattan;
+    else
+        metric = new DTW;
+    set<Object *> bestCenters;
+    auto centers = cluster->getCenters();
+    for(auto center : centers){
+        auto members = cluster->getClusters()[center];
+        Object *bestCenter;
+        double min = numeric_limits<double>::max();
+        for(auto candidateCenter : members){
+            //calculate sum of distances to the candidateCenter
+            double sum = 0;
+            for(auto member : members){
+                sum += metric->dist(candidateCenter, member) / double(members.size());
+            }
+            if(sum < min){
+                min = sum;
+                bestCenter = candidateCenter;
+            }
+        }
+        bestCenters.insert(bestCenter);
+    }
+    cluster->setCenters(bestCenters);
+    //TODO: put a stop
+    return false;
 }
 
 bool CentroidUpdate::execute() {

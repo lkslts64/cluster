@@ -3,6 +3,7 @@
 
 #include <set>
 #include <map>
+#include <fstream>
 #include "GeneralParameters.h"
 
 using namespace std;
@@ -18,7 +19,7 @@ private:
      * Value:   set of objects that belong to this center
      */
     map<Object *, set<Object *>> clusters;
-
+    ofstream out;
 public:
 
     GeneralParameters *getGeneralParameters() {return gen_params;}
@@ -32,6 +33,10 @@ public:
     void testPrintClusterKeysAndSize();
     vector<double> getSilhouette();
     void output(string firstLine);
+
+    void clear();
+
+    void setOutputStream();
 };
 
 #endif //ALGORITHMS_PROJECT_CLUSTER_H

@@ -70,12 +70,11 @@ vector<double> Cluster::getSilhouette(){
 }
 
 void Cluster::output(string firstLine) {
-    ofstream out (getGeneralParameters()->getOutputFilename(), ofstream::out);
     out << firstLine << endl;
     int i = 0;
     for(const auto& cluster : clusters){
         //TODO: centroid: <item_id> ή πίνακας με τις συντεταγμένες του centroid στην περίπτωση k-means Update}
-        out << "CLUSTER-"<< i <<" {size: " << cluster.second.size() << ", centroid: " << cluster.first->getId() << "}" << endl;
+        out << "CLUSTER-"<< i+1 <<" {size: " << cluster.second.size() << ", centroid: " << cluster.first->getId() << "}" << endl;
         i++;
     }
     //TODO: in seconds
@@ -90,7 +89,7 @@ void Cluster::output(string firstLine) {
     if(getGeneralParameters()->isComplete()){
         i = 0;
         for(const auto& cluster : clusters){
-            out << "CLUSTER-"<< i <<" {";
+            out << "CLUSTER-"<< i+1 <<" {";
             for(auto obj : cluster.second){
                 out << obj->getId() << ", ";
             }
@@ -98,4 +97,13 @@ void Cluster::output(string firstLine) {
             i++;
         }
     }
+    out << endl;
+}
+
+void Cluster::clear() {
+    clusters.clear();
+}
+
+void Cluster::setOutputStream() {
+    out.open(getGeneralParameters()->getOutputFilename(), ofstream::out);
 }

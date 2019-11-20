@@ -85,6 +85,7 @@ void readArguments(Cluster* cluster, int argc, char **argv){
     if (parser->cmdOptionExists("-c"))
         parseConfigFile(gen_params, parser->getCmdOption("-c"));
     cluster->setGeneralParameters(gen_params);
+    cluster->setOutputStream();
 }
 
 

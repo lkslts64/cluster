@@ -66,10 +66,10 @@ public:
 };
 
 class LloydAssignment : public AssignmentStrategy{
+private:
+    DistanceMetric* metric;
 public:
-    LloydAssignment(Cluster* cluster){
-        this->cluster = cluster;
-    }
+    LloydAssignment(Cluster* cluster);
     void execute();
 };
 
