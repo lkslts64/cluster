@@ -34,6 +34,9 @@ public:
     LSH(DistanceMetric *metric) {
         distMetric = metric;
     }
+    ~LSH(){
+        delete tables;
+    }
     DistanceMetric *getMetric() { return distMetric;}
 
     int getNumOfFunctions() const {return numOfFunctions;}

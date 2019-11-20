@@ -50,6 +50,10 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
     //lsh->getHashTableStruct()->test_print_hashtable();
 }
 
+InverseAssignment::~InverseAssignment(){
+    delete lsh;
+}
+
 void InverseAssignment::execute() {
     //calculate initial radius = min(dist between centers)/2
     auto metric = lsh->getMetric();
