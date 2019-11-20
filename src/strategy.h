@@ -6,6 +6,9 @@
 #include "Cluster.h"
 #include "Dataset.h"
 #include "LSH.h"
+#include "kmeans.h"
+#define DBA_THRESHOLD 1
+#define KMEANS_THRESHOLD 0.5
 
 using namespace std;
 
@@ -97,9 +100,17 @@ public:
 };
 
 class CentroidUpdate : public UpdateStrategy{
+    vector<Kmeans *> algos;
 public:
     CentroidUpdate(Cluster* cluster){
         this->cluster = cluster;
+        auto dataset = cluster->getDataset();
+        if (dataset->getHasVectors()) 
+            for (int i = 0; i < cluster->getGeneralParameters()->getNumOfClusters(); i++) 
+                algos.push_back(new KmeansPoints(KMEANS_THRESHOLD,dataset->getDimension()));
+        else 
+            for (int i = 0; i < cluster->getGeneralParameters()->getNumOfClusters(); i++) 
+                algos.push_back(new DBA(DBA_THRESHOLD));
     }
     bool execute();
 };

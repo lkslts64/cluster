@@ -30,7 +30,8 @@ void test_DBA() {
    curves.insert(curv2);
    curves.insert(curv3);
    curves.insert(curv4);
-   auto dba = new DBA(curves,1);
+   auto dba = new DBA(1);
+   dba->setObjs(curves);
    bool stop;
    auto obj = dba->centroid(&stop);
    auto res = dynamic_cast<Curve *>(obj);
@@ -50,7 +51,8 @@ void test_KmeansPoints() {
    auto p2 = new Point(vector<double> {-6,9});
    auto p3 = new Point(vector<double> {-5,5});
    set<Object *> pset {p1,p2,p3};
-   auto kmeans = new KmeansPoints(pset,1.0,2);
+   auto kmeans = new KmeansPoints(1.0,2);
+   kmeans->setObjs(pset);
    bool stop;
    auto obj = kmeans->centroid(&stop);
    auto res = dynamic_cast<Point *>(obj);

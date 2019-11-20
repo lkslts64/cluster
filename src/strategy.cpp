@@ -5,8 +5,6 @@
 #include "kmeans.h"
 #include <limits>
 #include <algorithm>
-#define DBA_THRESHOLD 1
-#define KMEANS_THRESHOLD 0.5
 
 void RandomInit::execute() {
     auto objs = cluster->getDataset()->getData();
@@ -179,21 +177,18 @@ bool PAMUpdate::execute() {
 bool CentroidUpdate::execute() {
     auto objs = cluster->getDataset();
     auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
-
     bool stop;
     int stopCount = 0;
     Object *centroid;
     set<Object *> centroids;
-    Kmeans *algo;
+    int i = 0;
     for (auto clust : cluster->getClusters()) {
-        if (objs->getHasVectors()) 
-            algo = new KmeansPoints(clust.second,KMEANS_THRESHOLD,objs->getDimension());
-        else 
-            algo = new DBA(clust.second,DBA_THRESHOLD);
-        centroid = algo->centroid(&stop);
+        algos[i]->setObjs(clust.second);
+        centroid = algos[i]->centroid(&stop);
         if (stop) 
             stopCount++;
         centroids.insert(centroid);
+        i++;
     }
     cluster->setCenters(centroids);
     //we should stop if all centroids didn't change too much from the

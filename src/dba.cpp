@@ -5,7 +5,7 @@
 
 using namespace std;
 
-DBA::DBA(set<Object *> curves,double stopThreshold) : Kmeans(curves,stopThreshold) {
+DBA::DBA(double stopThreshold) : Kmeans(stopThreshold) {
     centroidLen = meanLength();
     currCentroid = pickRandomFilterShort();
     this->metric = new DTW();

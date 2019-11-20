@@ -14,11 +14,13 @@ class Kmeans {
     DistanceMetric *metric;
     double stopThreshold;
     public:
-    Kmeans(set<Object *> objs,double stopThreshold) {
-        this->objs = objs;
+    Kmeans(double stopThreshold) {
         this->stopThreshold = stopThreshold;
         this->currCentroid = nullptr;
         this->prevCentroid = nullptr;
+    }
+    void setObjs(set<Object *> objs) {
+        this->objs = objs;
     }
     bool canStop() {
         if (prevCentroid == nullptr)
@@ -34,8 +36,8 @@ class Kmeans {
 class KmeansPoints : public Kmeans {
     int numDimension;
     public:
-        KmeansPoints(set<Object*> points,double stopThreshold,int numDimension) : 
-        Kmeans(points,stopThreshold) {
+        KmeansPoints(double stopThreshold,int numDimension) : 
+        Kmeans(stopThreshold) {
             this->numDimension = numDimension;
             this->metric = new Manhattan();
         };
@@ -84,7 +86,7 @@ class DBA : public Kmeans {
     Curve *pickRandomFilterShort();
     Curve *pickRandomSubsequence(Curve *curve);
     public:
-        DBA(set<Object *> curves,double stopThreshold);
+        DBA(double stopThreshold);
         Object* centroid(bool *stop);
 };
 
