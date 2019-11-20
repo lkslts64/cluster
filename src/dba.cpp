@@ -53,6 +53,8 @@ Point DBA::mean(set<Point,point_compare> pset) {
 
 int DBA::meanLength() {
     int sum = 0;
+    if (!objs.size()) 
+        return 0;
     for (auto obj: objs) {
         auto c = dynamic_cast<Curve *>(obj); 
         sum += c->getPoints().size();
@@ -65,6 +67,8 @@ int DBA::meanLength() {
 Curve *DBA::pickRandomFilterShort() {
     random_device dev;
     mt19937 rng(dev());
+    if (!objs.size())
+        return nullptr;
     uniform_int_distribution<int> curveDist(0,objs.size()-1);
     //TODO:transform set-> vector so we can index it.
     //this is very costly assuming the set will 
