@@ -128,7 +128,7 @@ void InverseAssignment::execute() {
     int i = 0;
     for(auto obj : data){
         if(isAssigned.at(i))
-            break;
+            continue;
         Object * minCenter;
         double minDistance = numeric_limits<double>::max();
         for (auto center : centers) {
