@@ -144,8 +144,36 @@ void InverseAssignment::execute() {
 
 }
 
+//find the best centroid for each cluster
+//based on minimizing the sum of distances to the center
 bool PAMUpdate::execute() {
-
+    DistanceMetric* metric;
+    if(cluster->getDataset()->getHasVectors())
+        metric = new Manhattan;
+    else
+        metric = new DTW;
+    set<Object *> bestCenters;
+    auto centers = cluster->getCenters();
+    for(auto center : centers){
+        auto members = cluster->getClusters()[center];
+        Object *bestCenter;
+        double min = numeric_limits<double>::max();
+        for(auto candidateCenter : members){
+            //calculate sum of distances to the candidateCenter
+            double sum = 0;
+            for(auto member : members){
+                sum += metric->dist(candidateCenter, member) / double(members.size());
+            }
+            if(sum < min){
+                min = sum;
+                bestCenter = candidateCenter;
+            }
+        }
+        bestCenters.insert(bestCenter);
+    }
+    cluster->setCenters(bestCenters);
+    //TODO: put a stop
+    return false;
 }
 
 bool CentroidUpdate::execute() {
