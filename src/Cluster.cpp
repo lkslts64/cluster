@@ -70,12 +70,34 @@ vector<double> Cluster::getSilhouette(){
     return silhouette;
 }
 
-void Cluster::output(string firstLine, double time) {
+void Cluster::output(const string& firstLine, double time) {
     out << firstLine << endl;
     int i = 0;
     for(const auto& cluster : clusters){
-        //TODO: centroid: <item_id> ή πίνακας με τις συντεταγμένες του centroid στην περίπτωση k-means Update}
-        out << "CLUSTER-"<< i+1 <<" {size: " << cluster.second.size() << ", centroid: " << cluster.first->getId() << "}" << endl;
+        out << "CLUSTER-"<< i+1 <<" {size: " << cluster.second.size() << ", centroid: ";
+        if(cluster.first->getId().empty()){
+            if(data->getHasVectors()){
+                auto point = dynamic_cast<Point *> (cluster.first);
+                out << "( ";
+                for (auto coord : point->getCoordinates()) {
+                    out << coord << " ";
+                }
+                out << ")" << endl;
+            } else {
+                auto curve = dynamic_cast<Curve *> (cluster.first);
+                out << "[ ";
+                for(auto point : curve->getPoints()){
+                    out << "( ";
+                    for(auto coord : point.getCoordinates()){
+                        out << coord << " ";
+                    }
+                    out << ") ";
+                }
+                out << "]" << endl;
+            }
+
+        } else
+            out << cluster.first->getId() << "}" << endl;
         i++;
     }
     out << "clustering_time: " << time << endl;
