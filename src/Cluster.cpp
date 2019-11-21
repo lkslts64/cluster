@@ -107,3 +107,25 @@ void Cluster::clear() {
 void Cluster::setOutputStream() {
     out.open(getGeneralParameters()->getOutputFilename(), ofstream::out);
 }
+
+void Cluster::replaceCentersOfEmptyClusters() {
+    auto objs = data->getData();
+    random_device dev;
+    mt19937 rng(dev());
+    uniform_int_distribution<int> dist(0,objs.size()-1);
+    set<Object *> centers;
+    for (auto cluster : clusters)
+        centers.insert(cluster.first);
+    //find the empty clusters and change the centers randomly
+    for(const auto& cluster : clusters){
+        if(cluster.second.empty()){
+            auto objectToInsert = objs.at(dist(rng));
+            //if it already exists, find another
+            while (centers.find(objectToInsert) != centers.end())
+                objectToInsert = objs.at(dist(rng));
+            centers.erase(cluster.first);
+            centers.insert(objectToInsert);
+        }
+    }
+    setCenters(centers);
+}

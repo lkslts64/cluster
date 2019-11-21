@@ -55,7 +55,7 @@ void executeAlgorithm(Cluster* cluster, int init_selection, int assign_selection
             cout << "update break!" << endl;
             break;
         }
-    }while(count++ < 0);
+    }while(count++ < 1);
     //a last assignment is mandatory.
     //otherwise clusters map has no values
     cout << count << ". assigning..." << endl;

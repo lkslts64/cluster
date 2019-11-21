@@ -37,6 +37,8 @@ public:
     void clear();
 
     void setOutputStream();
+
+    void replaceCentersOfEmptyClusters();
 };
 
 #endif //ALGORITHMS_PROJECT_CLUSTER_H
