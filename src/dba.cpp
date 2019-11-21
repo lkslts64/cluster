@@ -18,6 +18,7 @@ Object *DBA::centroid(bool *stop) {
         vector<Point> pvec;
         auto dtw = dynamic_cast<DTW *>(metric);
         auto _prevCentroid = currCentroid;
+        auto centro = dynamic_cast<Curve*>(currCentroid);
         for (int i = 0; i < centroidLen; i++)
             psetVec.push_back(set<Point,point_compare>());
         auto ipairs = vector<struct IndexPairs>();
@@ -33,7 +34,7 @@ Object *DBA::centroid(bool *stop) {
             pvec.push_back(mean(psetVec.at(i)));
         }
         currCentroid = new Curve(pvec);
-        auto centro = dynamic_cast<Curve*>(currCentroid);
+        centro = dynamic_cast<Curve*>(currCentroid);
         //condition to stop current update 
         if (metric->dist(_prevCentroid,currCentroid) < stopThreshold)
             break;
@@ -107,7 +108,7 @@ Curve *DBA::pickRandomSubsequence(Curve *curve) {
     auto start = curveLenDist(rng);
     vector<Point> pvec;
     auto end = curve->getPoints().begin()+centroidLen-1;
-    for (int i = start; i < start+centroidLen-1; i++) {
+    for (int i = start; i < start+centroidLen; i++) {
         pvec.push_back(curve->getPoint(i));
     }
     return new Curve(pvec);
