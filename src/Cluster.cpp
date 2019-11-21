@@ -56,11 +56,12 @@ vector<double> Cluster::getSilhouette(){
             }
             //calculate averageDistance2
             for(auto obj2 : secondCluster.second)
-                b += metric->dist(obj,obj2) / double(secondCluster.second.size());
-
-            s += (b-a)/max(a,b);
+                b += metric->dist(obj, obj2) / double(secondCluster.second.size());
+            if(a!=0 || b!=0)
+                s += (b-a)/max(a,b);
         }
-        s = s / double(cluster.second.size());
+        if(!cluster.second.empty())
+            s /= double(cluster.second.size());
         total += s;
         silhouette.push_back(s);
     }
