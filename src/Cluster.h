@@ -32,11 +32,13 @@ public:
     void setCenters(const set<Object *>& centers);
     void testPrintClusterKeysAndSize();
     vector<double> getSilhouette();
-    void output(string firstLine);
+    void output(string firstLine, double time);
 
     void clear();
 
     void setOutputStream();
+
+    void replaceCentersOfEmptyClusters();
 };
 
 #endif //ALGORITHMS_PROJECT_CLUSTER_H

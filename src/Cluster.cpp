@@ -56,11 +56,12 @@ vector<double> Cluster::getSilhouette(){
             }
             //calculate averageDistance2
             for(auto obj2 : secondCluster.second)
-                b += metric->dist(obj,obj2) / double(secondCluster.second.size());
-
-            s += (b-a)/max(a,b);
+                b += metric->dist(obj, obj2) / double(secondCluster.second.size());
+            if(a!=0 || b!=0)
+                s += (b-a)/max(a,b);
         }
-        s = s / double(cluster.second.size());
+        if(!cluster.second.empty())
+            s /= double(cluster.second.size());
         total += s;
         silhouette.push_back(s);
     }
@@ -69,7 +70,7 @@ vector<double> Cluster::getSilhouette(){
     return silhouette;
 }
 
-void Cluster::output(string firstLine) {
+void Cluster::output(string firstLine, double time) {
     out << firstLine << endl;
     int i = 0;
     for(const auto& cluster : clusters){
@@ -77,8 +78,7 @@ void Cluster::output(string firstLine) {
         out << "CLUSTER-"<< i+1 <<" {size: " << cluster.second.size() << ", centroid: " << cluster.first->getId() << "}" << endl;
         i++;
     }
-    //TODO: in seconds
-    out << "clustering_time:" << endl;
+    out << "clustering_time: " << time << endl;
     cout<<"Calculating silhouette..."<<endl;
     out << "Silhouette: [";
     for(auto s : getSilhouette()){
@@ -106,4 +106,26 @@ void Cluster::clear() {
 
 void Cluster::setOutputStream() {
     out.open(getGeneralParameters()->getOutputFilename(), ofstream::out);
+}
+
+void Cluster::replaceCentersOfEmptyClusters() {
+    auto objs = data->getData();
+    random_device dev;
+    mt19937 rng(dev());
+    uniform_int_distribution<int> dist(0,objs.size()-1);
+    set<Object *> centers;
+    for (auto cluster : clusters)
+        centers.insert(cluster.first);
+    //find the empty clusters and change the centers randomly
+    for(const auto& cluster : clusters){
+        if(cluster.second.empty()){
+            auto objectToInsert = objs.at(dist(rng));
+            //if it already exists, find another
+            while (centers.find(objectToInsert) != centers.end())
+                objectToInsert = objs.at(dist(rng));
+            centers.erase(cluster.first);
+            centers.insert(objectToInsert);
+        }
+    }
+    setCenters(centers);
 }
