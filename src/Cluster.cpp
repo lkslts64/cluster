@@ -70,7 +70,7 @@ vector<double> Cluster::getSilhouette(){
     return silhouette;
 }
 
-void Cluster::output(string firstLine) {
+void Cluster::output(string firstLine, double time) {
     out << firstLine << endl;
     int i = 0;
     for(const auto& cluster : clusters){
@@ -78,8 +78,7 @@ void Cluster::output(string firstLine) {
         out << "CLUSTER-"<< i+1 <<" {size: " << cluster.second.size() << ", centroid: " << cluster.first->getId() << "}" << endl;
         i++;
     }
-    //TODO: in seconds
-    out << "clustering_time:" << endl;
+    out << "clustering_time: " << time << endl;
     cout<<"Calculating silhouette..."<<endl;
     out << "Silhouette: [";
     for(auto s : getSilhouette()){
