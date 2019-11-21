@@ -30,6 +30,8 @@ class DTW : public DistanceMetric {
     int c2Len;
     //returns min of the first three values and sets predecessor 
     int min(double left,double up,double diagonal,int *predecessor);
+    double _dist(Object *obj1,Object *obj2);
+    void free();
     public:
     double distWithIndexPairs(Object *obj1,Object *obj2,vector<struct IndexPairs> *indexPairs);
     double dist(Object *obj1,Object *obj2);

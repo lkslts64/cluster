@@ -70,7 +70,8 @@ void DTW::backtrack(vector<struct IndexPairs> *ipairs) {
 }
 
 
-double DTW::dist(Object *obj1,Object *obj2){
+
+double DTW::_dist(Object *obj1,Object *obj2){
     auto c1 = dynamic_cast<Curve *>(obj1);
     auto c2 = dynamic_cast<Curve *>(obj2);
     c1Len = c1->getPoints().size();
@@ -103,9 +104,22 @@ double DTW::dist(Object *obj1,Object *obj2){
     return arr[c1Len-1][c2Len-1].dist;
 }
 
+void DTW::free() {
+    for (int i =0; i < c1Len; i++)
+        delete arr[i];
+    delete arr;
+}
+
+double DTW::dist(Object *obj1,Object *obj2){
+    auto res = _dist(obj1,obj2);
+    free();
+    return res;
+}
+
 double DTW::distWithIndexPairs(Object *obj1,Object *obj2,vector<struct IndexPairs> *indexPairs) {
-    double dist = this->dist(obj1,obj2);
+    double dist = this->_dist(obj1,obj2);
     backtrack(indexPairs);
+    free();
     return dist;
 }
 
