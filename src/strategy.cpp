@@ -202,6 +202,8 @@ bool CentroidUpdate::execute() {
     set<Object *> centroids;
     int i = 0;
     for (auto clust : cluster->getClusters()) {
+        if (clust.second.size()==0)
+            throw exception();
         algos[i]->setObjs(clust.second);
         centroid = algos[i]->centroid(&stop);
         if (stop) 
