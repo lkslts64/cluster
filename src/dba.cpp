@@ -6,12 +6,17 @@
 using namespace std;
 
 DBA::DBA(double stopThreshold) : Kmeans(stopThreshold) {
-    centroidLen = meanLength();
-    currCentroid = pickRandomFilterShort();
     this->metric = new DTW();
+    this->init = false;
 }
 
 Object *DBA::centroid(bool *stop) {
+    //TODO:what we do when cluster is empty?
+    if (!init) {
+        centroidLen = meanLength();
+        currCentroid = pickRandomFilterShort();
+        init = true;
+    }
     vector<set<Point,point_compare>> psetVec;
     vector<Point> pvec;
     auto dtw = dynamic_cast<DTW *>(metric);
@@ -23,15 +28,15 @@ Object *DBA::centroid(bool *stop) {
         auto c = dynamic_cast<Curve *>(obj); 
         dtw->distWithIndexPairs(c,prevCentroid,&ipairs);
         for (auto pair : ipairs) {
-            psetVec.at(pair.p1).insert(c->getPoint(pair.p2));
+            psetVec.at(pair.p2).insert(c->getPoint(pair.p1));
         }
+        ipairs.clear();
     }
     for (int i =0; i < centroidLen; i++) {
         pvec.push_back(mean(psetVec.at(i)));
     }
     currCentroid = new Curve(pvec);
     *stop = canStop();
-    ipairs.clear();
     psetVec.clear();
     pvec.clear();
     return currCentroid;
@@ -53,8 +58,6 @@ Point DBA::mean(set<Point,point_compare> pset) {
 
 int DBA::meanLength() {
     int sum = 0;
-    if (!objs.size()) 
-        return 0;
     for (auto obj: objs) {
         auto c = dynamic_cast<Curve *>(obj); 
         sum += c->getPoints().size();
@@ -67,8 +70,6 @@ int DBA::meanLength() {
 Curve *DBA::pickRandomFilterShort() {
     random_device dev;
     mt19937 rng(dev());
-    if (!objs.size())
-        return nullptr;
     uniform_int_distribution<int> curveDist(0,objs.size()-1);
     //TODO:transform set-> vector so we can index it.
     //this is very costly assuming the set will 
@@ -89,6 +90,10 @@ Curve *DBA::pickRandomSubsequence(Curve *curve) {
         return curve;
     uniform_int_distribution<int> curveLenDist(0,randMax);
     auto start = curveLenDist(rng);
-    auto pointBegin = curve->getPoints().begin()+start;
-    return new Curve(vector<Point> (pointBegin,pointBegin+centroidLen));
+    vector<Point> pvec;
+    auto end = curve->getPoints().begin()+centroidLen-1;
+    for (int i = start; i < start+centroidLen-1; i++) {
+        pvec.push_back(curve->getPoint(i));
+    }
+    return new Curve(pvec);
 }

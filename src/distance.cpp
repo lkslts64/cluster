@@ -49,7 +49,7 @@ void DTW::backtrack(vector<struct IndexPairs> *ipairs) {
     auto i = c1Len-1;
     auto j = c2Len-1;
     //push last pair
-    ipair = {c1Len-1,c2Len-1};
+    ipair = {i,j};
     ipairs->push_back(ipair);
     while (arr[i][j].predecessor != this->start) {
         switch (arr[i][j].predecessor) {

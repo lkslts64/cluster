@@ -80,6 +80,7 @@ struct point_compare {
 class DBA : public Kmeans {
     //array of point sets
     int centroidLen;
+    bool init;
     //algorithm ends if dist(nextCentroid,currCentroid) < endDistThreshold
     int meanLength();
     Point mean(set<Point,point_compare> pset) ;

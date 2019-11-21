@@ -18,11 +18,15 @@ void test_DBA() {
    (*new Point(vector<double> {-5,5}))};
    vector<Point> pointVec4 {(*new Point(vector<double> {-20,83})),
    (*new Point(vector<double> {-6,9}))};
+   vector<Point> pointVec5 {(*new Point(vector<double> {-1,-1})),
+   (*new Point(vector<double> {2,2})),(*new Point(vector<double> {10,10}))};
    auto curv1 = new Curve(pointVec);
-   auto curv2 = new Curve(pointVec2);
+   auto curv5 = new Curve(pointVec5);
    auto dtw = new DTW();
-   auto dist = dtw->dist(curv1,curv2);
-   CU_ASSERT(dist > 7 && dist < 8);
+   auto ipairs = vector<struct IndexPairs>();
+   auto dist = dtw->distWithIndexPairs(curv1,curv5,&ipairs);
+   CU_ASSERT(dist > 11 && dist < 12);
+   auto curv2 = new Curve(pointVec2);
    auto curv3 = new Curve(pointVec3);
    auto curv4 = new Curve(pointVec4);
    auto curves = set<Object *>();
@@ -56,7 +60,8 @@ void test_KmeansPoints() {
    bool stop;
    auto obj = kmeans->centroid(&stop);
    auto res = dynamic_cast<Point *>(obj);
-   CU_ASSERT(res->getCoordinate(0) == -3);
+   CU_ASSERT(res->getCoordinates().size() == 2);
+   CU_ASSERT(int(res->getCoordinate(0)) == -3);
    CU_ASSERT(res->getCoordinate(1) == 5);
 }
 
