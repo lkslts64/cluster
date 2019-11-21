@@ -7,38 +7,53 @@ using namespace std;
 
 DBA::DBA(double stopThreshold) : Kmeans(stopThreshold) {
     this->metric = new DTW();
-    this->init = false;
 }
 
 Object *DBA::centroid(bool *stop) {
-    //TODO:what we do when cluster is empty?
-    if (!init) {
-        centroidLen = meanLength();
-        currCentroid = pickRandomFilterShort();
-        init = true;
-    }
-    vector<set<Point,point_compare>> psetVec;
-    vector<Point> pvec;
-    auto dtw = dynamic_cast<DTW *>(metric);
-    prevCentroid = currCentroid;
-    for (int i = 0; i < centroidLen; i++)
-        psetVec.push_back(set<Point,point_compare>());
-    auto ipairs = vector<struct IndexPairs>();
-    for (auto obj : objs) {
-        auto c = dynamic_cast<Curve *>(obj); 
-        dtw->distWithIndexPairs(c,prevCentroid,&ipairs);
-        for (auto pair : ipairs) {
-            psetVec.at(pair.p2).insert(c->getPoint(pair.p1));
+    //auto _prevCentroid = currCentroid;
+    centroidLen = meanLength();
+    currCentroid = pickRandomFilterShort();
+    while(true)  {
+        vector<set<Point,point_compare>> psetVec;
+        vector<Point> pvec;
+        auto dtw = dynamic_cast<DTW *>(metric);
+        auto _prevCentroid = currCentroid;
+        for (int i = 0; i < centroidLen; i++)
+            psetVec.push_back(set<Point,point_compare>());
+        auto ipairs = vector<struct IndexPairs>();
+        for (auto obj : objs) {
+            auto c = dynamic_cast<Curve *>(obj); 
+            dtw->distWithIndexPairs(c,currCentroid,&ipairs);
+            for (auto pair : ipairs) {
+                psetVec.at(pair.p2).insert(c->getPoint(pair.p1));
+            }
+            ipairs.clear();
         }
-        ipairs.clear();
+        for (int i =0; i < centroidLen; i++) {
+            pvec.push_back(mean(psetVec.at(i)));
+        }
+        currCentroid = new Curve(pvec);
+        auto centro = dynamic_cast<Curve*>(currCentroid);
+        //condition to stop current update 
+        if (metric->dist(_prevCentroid,currCentroid) < stopThreshold)
+            break;
+        psetVec.clear();
+        pvec.clear();
+        //return currCentroid;
     }
-    for (int i =0; i < centroidLen; i++) {
-        pvec.push_back(mean(psetVec.at(i)));
+    //condition to stop clusterizing
+    if (prevCentroid != nullptr) {
+        if (canStop()) {
+            *stop = true;
+        } else {
+            *stop = false;
+        }
+    } else {
+        *stop = false;
     }
-    currCentroid = new Curve(pvec);
-    *stop = canStop();
-    psetVec.clear();
-    pvec.clear();
+    //set prev to be curren so we can compare at next 
+    //invokation of centroid()
+    prevCentroid = currCentroid;
     return currCentroid;
 }
 
