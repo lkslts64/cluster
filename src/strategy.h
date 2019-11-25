@@ -92,10 +92,11 @@ public:
 };
 
 class PAMUpdate : public UpdateStrategy{
+private:
+    DistanceMetric* metric;
 public:
-    PAMUpdate(Cluster* cluster){
-        this->cluster = cluster;
-    }
+    PAMUpdate(Cluster* cluster);
+    ~PAMUpdate();
     bool execute();
 };
 

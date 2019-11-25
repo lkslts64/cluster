@@ -161,17 +161,41 @@ void InverseAssignment::execute() {
     }
 }
 
-//find the best centroid for each cluster
-//based on minimizing the sum of distances to the center
-bool PAMUpdate::execute() {
-    DistanceMetric* metric;
+
+PAMUpdate::PAMUpdate(Cluster* cluster){
+    this->cluster = cluster;
     if(cluster->getDataset()->getHasVectors())
         metric = new Manhattan;
     else
         metric = new DTW;
-    set<Object *> bestCenters;
-    auto centers = cluster->getCenters();
-    for(auto center : centers){
+}
+PAMUpdate::~PAMUpdate(){
+    delete metric;
+}
+double getDistanceBetweenSets(DistanceMetric* metric, const set<Object*>& set1, const set<Object*>& set2){
+    double dist = 0;
+    for(auto center1 : set1){
+        double min = numeric_limits<double>::max();
+        for(auto center2 : set2){
+            double dist = metric->dist(center1, center2);
+            cout <<"every " <<dist<<endl;
+            if(dist < min)
+                min = dist;
+        }
+        dist+=min;
+    }
+    cout << "DISTANCE: "<< dist << endl;
+    return dist;
+}
+//find the best centroid for each cluster
+//based on minimizing the sum of distances to the center
+bool PAMUpdate::execute() {
+    //keep previous centers to check stop
+    set<Object *> previousCenters;
+    for(auto center: cluster->getCenters())
+        previousCenters.insert(center);
+    set<Object *> currentCenters;
+    for(auto center : cluster->getCenters()){
         auto members = cluster->getClusters()[center];
         Object *bestCenter;
         double min = numeric_limits<double>::max();
@@ -186,11 +210,10 @@ bool PAMUpdate::execute() {
                 bestCenter = candidateCenter;
             }
         }
-        bestCenters.insert(bestCenter);
+        currentCenters.insert(bestCenter);
     }
-    cluster->setCenters(bestCenters);
-    //TODO: put a stop
-    return false;
+    cluster->setCenters(currentCenters);
+    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00001;
 }
 
 bool CentroidUpdate::execute() {
