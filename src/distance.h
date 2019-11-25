@@ -5,6 +5,7 @@
 class DistanceMetric {
     public:
     virtual double dist(Object* obj1,Object *obj2) = 0;
+    virtual ~DistanceMetric(){};
 };
 
 class Manhattan : public DistanceMetric {
@@ -36,7 +37,6 @@ class DTW : public DistanceMetric {
     double distWithIndexPairs(Object *obj1,Object *obj2,vector<struct IndexPairs> *indexPairs);
     double dist(Object *obj1,Object *obj2);
     void backtrack(vector<struct IndexPairs> *ipairs);
-    ~DTW();
 };
 
 #endif

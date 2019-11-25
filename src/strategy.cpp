@@ -118,21 +118,21 @@ void InverseAssignment::execute() {
                 int hash = (*hashers.at(i))(center);
                 if(hts[i].find(hash) == hts[i].end()) //empty bucket
                     continue;
-                auto points = hts[i].at(hash);
-                for(auto point : points){
+                auto objects = hts[i].at(hash);
+                for(auto obj : objects){
                     Object * minCenter;
                     double minDistance = numeric_limits<double>::max();
                     for (auto candidateCenter : centersInSameBucket) {
-                        double dist = metric->dist(point, candidateCenter);
+                        double dist = metric->dist(obj, candidateCenter);
                         if(dist < minDistance){
                             minDistance = dist;
                             minCenter = candidateCenter;
                         }
                     }
 
-                    isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), point))) = true;
+                    isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), obj))) = true;
 
-                    cluster->addToCluster(minCenter, point);
+                    cluster->addToCluster(minCenter, obj);
                 }
             }
         }
@@ -140,8 +140,11 @@ void InverseAssignment::execute() {
         //assign every remaining object to the nearest center (brute-force)
         int i = 0;
         for(auto obj : data){
-            if(isAssigned.at(i))
+            if(isAssigned.at(i)){
+                i++;
                 continue;
+            }
+
             Object * minCenter;
             double minDistance = numeric_limits<double>::max();
             for (auto center : centers) {
@@ -151,12 +154,13 @@ void InverseAssignment::execute() {
                     minCenter = center;
                 }
             }
+
             cluster->addToCluster(minCenter, obj);
             i++;
         }
-
         if(noEmptyCluster(cluster->getClusters()))
             return;
+        cout << "There are empty clusters, replacing..." << endl;
         cluster->replaceCentersOfEmptyClusters();
     }
 }
@@ -178,7 +182,6 @@ double getDistanceBetweenSets(DistanceMetric* metric, const set<Object*>& set1, 
         double min = numeric_limits<double>::max();
         for(auto center2 : set2){
             double dist = metric->dist(center1, center2);
-            cout <<"every " <<dist<<endl;
             if(dist < min)
                 min = dist;
         }
@@ -213,7 +216,7 @@ bool PAMUpdate::execute() {
         currentCenters.insert(bestCenter);
     }
     cluster->setCenters(currentCenters);
-    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00001;
+    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00000000001;
 }
 
 bool CentroidUpdate::execute() {

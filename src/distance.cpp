@@ -122,7 +122,3 @@ double DTW::distWithIndexPairs(Object *obj1,Object *obj2,vector<struct IndexPair
     free();
     return dist;
 }
-
-DTW::~DTW() {
-    delete []arr;
-}
