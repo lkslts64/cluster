@@ -17,8 +17,9 @@ void SpreadOutInit::_execute(vector<Object *> objs,int numClusters) {
     random_device dev;
     mt19937 rng(dev());
     auto objsSize = objs.size();
+    //index of distArr is a centroid candidate
     vector<double> distArr;
-    //index i of indexArr stores index of object at distArr[i] at objs vector
+    //index i of indexArr stores index of distArr[i] at objs vector
     vector<int> indexArr;
     while (centers.size() < numClusters) {
         double max = numeric_limits<double>::min();
