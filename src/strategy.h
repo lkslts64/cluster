@@ -38,8 +38,6 @@ public:
 
 class SpreadOutInit : public InitStrategy {
     set<Object *> centers;
-    //index of each center is dataset vector
-    set<int> centersIndex;
     DistanceMetric *metric;
 public:
     SpreadOutInit(Cluster* cluster){

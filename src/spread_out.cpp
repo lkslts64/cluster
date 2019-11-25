@@ -18,6 +18,8 @@ void SpreadOutInit::_execute(vector<Object *> objs,int numClusters) {
     mt19937 rng(dev());
     auto objsSize = objs.size();
     vector<double> distArr;
+    //index i of indexArr stores index of object at distArr[i] at objs vector
+    vector<int> indexArr;
     while (centers.size() < numClusters) {
         double max = numeric_limits<double>::min();
         for (int i = 0; i < objsSize; i++) {
@@ -28,6 +30,7 @@ void SpreadOutInit::_execute(vector<Object *> objs,int numClusters) {
             if (dist > max)
                 max = dist;
             distArr.push_back(dist);
+            indexArr.push_back(i);
         }
         //normalize with maximum of array 
         for (int i =0; i< distArr.size(); i++) 
@@ -36,17 +39,9 @@ void SpreadOutInit::_execute(vector<Object *> objs,int numClusters) {
             distArr.at(i) += distArr.at(i-1);
         uniform_int_distribution<int> uni(0,distArr.at(distArr.size()-1));
         auto ind = this->search(distArr,uni(rng));            
-        //ind does not hold the index of the next centroid
-        //actual index is ind + number of centroids with index
-        //less than ind in objs vector.
-        int count = 0;
-        for (auto i: centersIndex) {
-            if (i <= ind)
-                count++;
-        }
-        centers.insert(objs.at(ind+count));
-        centersIndex.insert(ind+count);
+        centers.insert(objs.at(indexArr.at(ind)));
         distArr.clear();
+        indexArr.clear();
     } 
 }
 
@@ -84,5 +79,4 @@ void SpreadOutInit::init(vector<Object *> objs) {
     auto index = uni(rng);
     auto firstCentroid = objs.at(index);
     centers.insert(firstCentroid);
-    centersIndex.insert(index);
 }
