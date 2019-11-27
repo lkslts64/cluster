@@ -43,6 +43,7 @@ void SpreadOutInit::_execute(vector<Object *> objs,int numClusters) {
         centers.insert(objs.at(indexArr.at(ind)));
         distArr.clear();
         indexArr.clear();
+        //
     } 
 }
 
