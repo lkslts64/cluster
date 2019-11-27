@@ -3,9 +3,35 @@
 #include <fstream>
 using namespace std;
 
-void Cluster::testPrintClusterKeysAndSize() {
-    for(auto cluster : clusters) {
-        cout << "CENTER: " << cluster.first->getId() << " SIZE: "<< cluster.second.size() << endl;
+void Cluster::testPrintCurrentCenters() {
+    cout << "TEST PRINTING CURRENT CENTERS"<<endl;
+    int i = 0;
+    for(const auto& cluster : clusters){
+        cout << "CLUSTER-"<< i+1 <<" {centroid: ";
+        if(cluster.first->getId().empty()){
+            if(data->getHasVectors()){
+                auto point = dynamic_cast<Point *> (cluster.first);
+                cout << "( ";
+                for (auto coord : point->getCoordinates()) {
+                    cout << coord << " ";
+                }
+                cout << ")" << endl;
+            } else {
+                auto curve = dynamic_cast<Curve *> (cluster.first);
+                cout << "[ ";
+                for(auto point : curve->getPoints()){
+                    cout << "( ";
+                    for(auto coord : point.getCoordinates()){
+                        cout << coord << " ";
+                    }
+                   cout << ") ";
+                }
+                cout << "]" << endl;
+            }
+
+        } else
+            cout << cluster.first->getId() << "}" << endl;
+        i++;
     }
 }
 

@@ -216,10 +216,18 @@ bool PAMUpdate::execute() {
         currentCenters.insert(bestCenter);
     }
     cluster->setCenters(currentCenters);
-    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00000000001;
+
+    cout<<"----------------"<<endl;
+    cluster->testPrintCurrentCenters();
+    cout<<"----------------"<<endl;
+    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00001;
 }
 
 bool CentroidUpdate::execute() {
+    set<Object *> previousCenters;
+    for(auto center: cluster->getCenters())
+        previousCenters.insert(center);
+
     auto objs = cluster->getDataset();
     auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
     bool stop;
@@ -240,5 +248,13 @@ bool CentroidUpdate::execute() {
     cluster->setCenters(centroids);
     //we should stop if all centroids didn't change too much from the
     //previous update
+    cout<<"----------------"<<endl;
+    cluster->testPrintCurrentCenters();
+    cout<<"----------------"<<endl;
+
+    //For vectors first return is better
+    //For curves we have to regulate the compare value, otherwise use second return
+
+    return getDistanceBetweenSets(metric, previousCenters, cluster->getCenters()) < 0.05;
     return stopCount == numClusters;
 }
