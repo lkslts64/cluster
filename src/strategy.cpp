@@ -76,12 +76,12 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
     } else {
         lsh = new LSH(new DTW);
         //TODO: window... and min
-        lsh->setHashTableStruct(new CurveHashTableStruct(numOfGrids, numOfHFs, dimension, 0.000002, cluster->getDataset()->getMax(),2));
+        lsh->setHashTableStruct(new CurveHashTableStruct(numOfGrids, numOfHFs, dimension, 0.05, cluster->getDataset()->getMax(),10));
     }
     auto data = cluster->getDataset()->getData();
     for (auto & obj : data)
         lsh->getHashTableStruct()->addToAllHashTables(obj);
-    //lsh->getHashTableStruct()->test_print_hashtable();
+    lsh->getHashTableStruct()->test_print_hashtable();
 }
 InverseAssignment::~InverseAssignment(){
     delete lsh;
@@ -99,44 +99,61 @@ void InverseAssignment::execute() {
         for(auto obj : data){
             isAssigned.push_back(false);
         }
-
+        vector<bool> centersChecked;
+        for(auto center : centers){
+            centersChecked.push_back(false);
+        }
         // Optimization before brute-force (use LSH):
         // For every center, assign to it every object that is on the same bucket
         // In case that there are over 1 centers for the same object, select the min distance
         for(auto center : centers){
             set<Object *> centersInSameBucket;
             //find centers that are in the same bucket
+            int j =0;
             for(auto center2 : centers){
                 for(int i = 0; i < numOfHTs ; i++){
                     if((*hashers.at(i))(center) == (*hashers.at(i))(center2)) {
                         centersInSameBucket.insert(center2);
                     }
                 }
+                j++;
             }
-
-            for(int i = 0; i < numOfHTs ; i++){
-                int hash = (*hashers.at(i))(center);
-                if(hts[i].find(hash) == hts[i].end()) //empty bucket
-                    continue;
-                auto objects = hts[i].at(hash);
-                for(auto obj : objects){
-                    Object * minCenter;
-                    double minDistance = numeric_limits<double>::max();
-                    for (auto candidateCenter : centersInSameBucket) {
-                        double dist = metric->dist(obj, candidateCenter);
-                        if(dist < minDistance){
-                            minDistance = dist;
-                            minCenter = candidateCenter;
-                        }
+            //this center is the only one in his buckets, put all the objects of the buckets to him
+            if(centersInSameBucket.size() == 1){
+                for(int i = 0; i < numOfHTs ; i++){
+                    int hash = (*hashers.at(i))(center);
+                    if(hts[i].find(hash) == hts[i].end()) //empty bucket
+                        continue;
+                    auto objects = hts[i].at(hash);
+                    for(auto obj : objects){
+                        isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), obj))) = true;
+                        cluster->addToCluster(center, obj);
                     }
+                }
 
-                    isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), obj))) = true;
-
-                    cluster->addToCluster(minCenter, obj);
+            }else{
+                for(int i = 0; i < numOfHTs ; i++){
+                    int hash = (*hashers.at(i))(center);
+                    if(hts[i].find(hash) == hts[i].end()) //empty bucket
+                        continue;
+                    auto objects = hts[i].at(hash);
+                    for(auto obj : objects){
+                        Object * minCenter;
+                        double minDistance = numeric_limits<double>::max();
+                        for (auto candidateCenter : centersInSameBucket) {
+                            double dist = metric->dist(obj, candidateCenter);
+                            if(dist < minDistance){
+                                minDistance = dist;
+                                minCenter = candidateCenter;
+                            }
+                        }
+                        isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), obj))) = true;
+                        cluster->addToCluster(minCenter, obj);
+                    }
                 }
             }
         }
-
+        cout << "END OF LSH"<<endl;
         //assign every remaining object to the nearest center (brute-force)
         int i = 0;
         for(auto obj : data){
@@ -144,7 +161,6 @@ void InverseAssignment::execute() {
                 i++;
                 continue;
             }
-
             Object * minCenter;
             double minDistance = numeric_limits<double>::max();
             for (auto center : centers) {
@@ -158,6 +174,7 @@ void InverseAssignment::execute() {
             cluster->addToCluster(minCenter, obj);
             i++;
         }
+        cout << "end of bf"<<endl;
         if(noEmptyCluster(cluster->getClusters()))
             return;
         cout << "There are empty clusters, replacing..." << endl;
@@ -199,6 +216,7 @@ bool PAMUpdate::execute() {
         previousCenters.insert(center);
     set<Object *> currentCenters;
     for(auto center : cluster->getCenters()){
+        cout <<"\tChecking center: "<<center->getId()<<endl;
         auto members = cluster->getClusters()[center];
         Object *bestCenter;
         double min = numeric_limits<double>::max();
@@ -255,6 +273,6 @@ bool CentroidUpdate::execute() {
     //For vectors first return is better
     //For curves we have to regulate the compare value, otherwise use second return
 
-    return getDistanceBetweenSets(metric, previousCenters, cluster->getCenters()) < 0.05;
+    //return getDistanceBetweenSets(metric, previousCenters, cluster->getCenters()) < 0.005;
     return stopCount == numClusters;
 }
