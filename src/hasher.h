@@ -53,7 +53,7 @@ class CurveHasher : public Hasher {
         double *snap(Point *point);
         double **snap(Curve *curve);
         double snap(double coordinate,int i);
-        void pad(Curve *curve);
+        Curve *pad(Curve *curve);
         //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();

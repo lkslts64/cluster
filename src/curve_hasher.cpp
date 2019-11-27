@@ -34,21 +34,22 @@ CurveHasher::~CurveHasher() {
 
 int CurveHasher::operator() (Object *obj, bool insert) const {
     Curve *curve = dynamic_cast<Curve *>(obj);
-    pad(curve);
-    auto point = vectorize(snap(curve));
+    auto c = pad(curve);
+    auto point = vectorize(snap(c));
     auto bucket =  (*phasher)(point);
     free(point);
     return bucket;
 }
 
 //TODO: pad more efficiently without using a temp vector (pointVec)
-void CurveHasher::pad(Curve *curve) {
-    vector<Point> pointVec (curve->getPoints());
+Curve *CurveHasher::pad(Curve *curve) {
+    vector<Point> pointVec  = (curve->getPoints());
     auto sz = pointVec.size();
     for (int i=0; i < max-sz; i++)
         pointVec.push_back((*new Point(vector<double> (numDimension,0xffff))));
-    sz = pointVec.size();
-    curve->setPoints(pointVec);
+    //sz = pointVec.size();
+    //curve->setPoints(pointVec);
+    return new Curve(pointVec);
 }
 
 //transform grid curve (snapedCurve) to a vector which is 
