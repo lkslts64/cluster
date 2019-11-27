@@ -64,6 +64,7 @@ Object *DBA::centroid(bool *stop) {
 Point DBA::mean(set<Point,point_compare> pset) {
     double sumX = 0;
     double sumY = 0;
+    assert(pset.size() >0);
     for (auto point : pset) {
         auto coords = point.getCoordinates();
         assert(coords.size() == 2); 
