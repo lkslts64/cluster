@@ -101,6 +101,7 @@ public:
 };
 
 class CentroidUpdate : public UpdateStrategy{
+    DistanceMetric* metric;
     vector<Kmeans *> algos;
 public:
     CentroidUpdate(Cluster* cluster){
@@ -112,7 +113,13 @@ public:
         else 
             for (int i = 0; i < cluster->getGeneralParameters()->getNumOfClusters(); i++) 
                 algos.push_back(new DBA(DBA_THRESHOLD));
+
+        if(cluster->getDataset()->getHasVectors())
+            metric = new Manhattan;
+        else
+            metric = new DTW;
     }
+    ~CentroidUpdate(){delete metric;}
     bool execute();
 };
 
