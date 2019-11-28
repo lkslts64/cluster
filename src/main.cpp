@@ -53,9 +53,7 @@ void executeAlgorithm(Cluster* cluster, InitAlgo init_selection, AssignAlgo assi
     update_selection+1 << endl<<"============="<<endl;
     cout << "initializing..." << endl;
     init->execute();
-    cout<<"----------------"<<endl;
     cluster->testPrintCurrentCenters();
-    cout<<"----------------"<<endl;
     int count = 0;
     do{
         cout << count << ". assigning..." << endl;
@@ -63,9 +61,10 @@ void executeAlgorithm(Cluster* cluster, InitAlgo init_selection, AssignAlgo assi
         cout << count << ". updating..." << endl;
         if (update->execute())  {
             cout << "update break!" << endl;
+            count++;
             break;
         }
-    }while(count++ < 20);
+    }while(count++ < 40);
     //a last assignment is mandatory.
     //otherwise clusters map has no values
     cout << count << ". assigning..." << endl;

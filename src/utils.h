@@ -14,3 +14,4 @@ void test_print_data(Dataset *data);
 double minDist(DistanceMetric *metric,Object *target, set<Object*> objs, Object *closest = nullptr);
 double minVec(vector<double> vec);
 double minDistanceInSet(set<Object *>, DistanceMetric*);
+void printProgress (double percentage);

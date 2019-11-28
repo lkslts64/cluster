@@ -42,7 +42,9 @@ void LloydAssignment::execute() {
         auto centers = cluster->getCenters();
         auto data = cluster->getDataset()->getData();
         //assign every object to the nearest center (brute-force)
+        int i = 0;
         for(auto obj : data){
+            printProgress(double(i+1)/double(data.size()));
             Object * minCenter;
             double minDistance = numeric_limits<double>::max();
             for (auto center : centers) {
@@ -53,10 +55,13 @@ void LloydAssignment::execute() {
                 }
             }
             cluster->addToCluster(minCenter, obj);
+            i++;
         }
+        cout << endl;
 
         if(noEmptyCluster(cluster->getClusters()))
             return;
+        cout << "There are empty clusters, replacing..." << endl;
         cluster->replaceCentersOfEmptyClusters();
     }
 
@@ -76,12 +81,12 @@ InverseAssignment::InverseAssignment(Cluster* cluster) {
     } else {
         lsh = new LSH(new DTW);
         //TODO: window... and min
-        lsh->setHashTableStruct(new CurveHashTableStruct(numOfGrids, numOfHFs, dimension, 0.05, cluster->getDataset()->getMax(),10));
+        lsh->setHashTableStruct(new CurveHashTableStruct(numOfGrids, numOfHFs, dimension, 0.05, cluster->getDataset()->getMax(),2));
     }
     auto data = cluster->getDataset()->getData();
     for (auto & obj : data)
         lsh->getHashTableStruct()->addToAllHashTables(obj);
-    lsh->getHashTableStruct()->test_print_hashtable();
+    //lsh->getHashTableStruct()->test_print_hashtable();
 }
 InverseAssignment::~InverseAssignment(){
     delete lsh;
@@ -96,27 +101,21 @@ void InverseAssignment::execute() {
         auto data = cluster->getDataset()->getData();
         //array that tells if a point/curve has been assigned to a center
         vector<bool> isAssigned;
-        for(auto obj : data){
-            isAssigned.push_back(false);
-        }
-        vector<bool> centersChecked;
-        for(auto center : centers){
-            centersChecked.push_back(false);
-        }
+        for(auto obj : data) isAssigned.push_back(false);
         // Optimization before brute-force (use LSH):
         // For every center, assign to it every object that is on the same bucket
         // In case that there are over 1 centers for the same object, select the min distance
+        int counter=0;
         for(auto center : centers){
+            printProgress(double(counter+1)/double(centers.size()*2));
             set<Object *> centersInSameBucket;
             //find centers that are in the same bucket
-            int j =0;
             for(auto center2 : centers){
                 for(int i = 0; i < numOfHTs ; i++){
                     if((*hashers.at(i))(center) == (*hashers.at(i))(center2)) {
                         centersInSameBucket.insert(center2);
                     }
                 }
-                j++;
             }
             //this center is the only one in his buckets, put all the objects of the buckets to him
             if(centersInSameBucket.size() == 1){
@@ -138,6 +137,8 @@ void InverseAssignment::execute() {
                         continue;
                     auto objects = hts[i].at(hash);
                     for(auto obj : objects){
+                        if(isAssigned.at(distance(data.begin(),find(data.begin(), data.end(), obj))))
+                            continue;
                         Object * minCenter;
                         double minDistance = numeric_limits<double>::max();
                         for (auto candidateCenter : centersInSameBucket) {
@@ -152,11 +153,13 @@ void InverseAssignment::execute() {
                     }
                 }
             }
+            counter++;
         }
-        cout << "END OF LSH"<<endl;
+        printProgress(0.5);
         //assign every remaining object to the nearest center (brute-force)
         int i = 0;
         for(auto obj : data){
+            printProgress(0.5 + double(i+1)/double(data.size()*2));
             if(isAssigned.at(i)){
                 i++;
                 continue;
@@ -170,11 +173,10 @@ void InverseAssignment::execute() {
                     minCenter = center;
                 }
             }
-
             cluster->addToCluster(minCenter, obj);
             i++;
         }
-        cout << "end of bf"<<endl;
+        cout << endl;
         if(noEmptyCluster(cluster->getClusters()))
             return;
         cout << "There are empty clusters, replacing..." << endl;
@@ -198,9 +200,9 @@ double getDistanceBetweenSets(DistanceMetric* metric, const set<Object*>& set1, 
     for(auto center1 : set1){
         double min = numeric_limits<double>::max();
         for(auto center2 : set2){
-            double dist = metric->dist(center1, center2);
-            if(dist < min)
-                min = dist;
+            double temp_dist = metric->dist(center1, center2);
+            if(temp_dist < min)
+                min = temp_dist;
         }
         dist+=min;
     }
@@ -215,12 +217,13 @@ bool PAMUpdate::execute() {
     for(auto center: cluster->getCenters())
         previousCenters.insert(center);
     set<Object *> currentCenters;
+    int i = 0;
     for(auto center : cluster->getCenters()){
-        cout <<"\tChecking center: "<<center->getId()<<endl;
         auto members = cluster->getClusters()[center];
         Object *bestCenter;
         double min = numeric_limits<double>::max();
         for(auto candidateCenter : members){
+            printProgress(double(i+1)/double(cluster->getDataset()->getData().size()));
             //calculate sum of distances to the candidateCenter
             double sum = 0;
             for(auto member : members){
@@ -230,14 +233,14 @@ bool PAMUpdate::execute() {
                 min = sum;
                 bestCenter = candidateCenter;
             }
+            i++;
         }
         currentCenters.insert(bestCenter);
-    }
-    cluster->setCenters(currentCenters);
 
-    cout<<"----------------"<<endl;
+    }
+    cout << endl;
+    cluster->setCenters(currentCenters);
     cluster->testPrintCurrentCenters();
-    cout<<"----------------"<<endl;
     return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00001;
 }
 
@@ -266,9 +269,7 @@ bool CentroidUpdate::execute() {
     cluster->setCenters(centroids);
     //we should stop if all centroids didn't change too much from the
     //previous update
-    cout<<"----------------"<<endl;
     cluster->testPrintCurrentCenters();
-    cout<<"----------------"<<endl;
 
     //For vectors first return is better
     //For curves we have to regulate the compare value, otherwise use second return

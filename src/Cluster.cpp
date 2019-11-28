@@ -4,6 +4,7 @@
 using namespace std;
 
 void Cluster::testPrintCurrentCenters() {
+    cout << "-----------------------------"<<endl;
     cout << "TEST PRINTING CURRENT CENTERS"<<endl;
     int i = 0;
     for(const auto& cluster : clusters){
@@ -33,6 +34,7 @@ void Cluster::testPrintCurrentCenters() {
             cout << cluster.first->getId() << "}" << endl;
         i++;
     }
+    cout << "-----------------------------"<<endl;
 }
 
 set<Object *> Cluster::getCenters() {
@@ -90,9 +92,12 @@ vector<double> Cluster::getSilhouette(){
             s /= double(cluster.second.size());
         total += s;
         silhouette.push_back(s);
+        cout << s << "---";
+        fflush(stdout);
     }
     total = total / double(clusters.size());
     silhouette.push_back(total);
+    cout << total << endl;
     return silhouette;
 }
 
