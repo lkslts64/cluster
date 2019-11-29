@@ -7,8 +7,8 @@
 #include "Dataset.h"
 #include "LSH.h"
 #include "kmeans.h"
-#define DBA_THRESHOLD 1
-#define KMEANS_THRESHOLD 0.5
+#define DBA_THRESHOLD 0.01
+#define KMEANS_THRESHOLD 1
 
 using namespace std;
 
@@ -101,6 +101,8 @@ public:
 class CentroidUpdate : public UpdateStrategy{
     DistanceMetric* metric;
     vector<Kmeans *> algos;
+    vector<Object *> prevCenters;
+    vector<Object *> currCenters;
 public:
     CentroidUpdate(Cluster* cluster){
         this->cluster = cluster;

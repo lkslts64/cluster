@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "strategy.h"
 #include "utils.h"
 #include "LSH.h"
@@ -192,9 +193,11 @@ PAMUpdate::PAMUpdate(Cluster* cluster){
     else
         metric = new DTW;
 }
+
 PAMUpdate::~PAMUpdate(){
     delete metric;
 }
+
 double getDistanceBetweenSets(DistanceMetric* metric, const set<Object*>& set1, const set<Object*>& set2){
     double dist = 0;
     for(auto center1 : set1){
@@ -206,9 +209,23 @@ double getDistanceBetweenSets(DistanceMetric* metric, const set<Object*>& set1, 
         }
         dist+=min;
     }
-    cout << "DISTANCE: "<< dist << endl;
     return dist;
 }
+
+double cumulativeVectorDistance(DistanceMetric* metric, const vector<Object*>& vec1, const vector<Object*>& vec2) {
+    auto itVec1 = vec1.begin();
+    auto itVec2 = vec2.begin();
+    double dist = 0;
+    assert(vec1.size() == vec2.size());
+    while(itVec1 != vec1.end() || itVec2 != vec2.end())
+    {
+        dist += metric->dist(*itVec2,*itVec1);
+        ++itVec1;
+        ++itVec2;
+    }
+    return dist;
+}
+
 //find the best centroid for each cluster
 //based on minimizing the sum of distances to the center
 bool PAMUpdate::execute() {
@@ -245,10 +262,6 @@ bool PAMUpdate::execute() {
 }
 
 bool CentroidUpdate::execute() {
-    set<Object *> previousCenters;
-    for(auto center: cluster->getCenters())
-        previousCenters.insert(center);
-
     auto objs = cluster->getDataset();
     auto numClusters = cluster->getGeneralParameters()->getNumOfClusters();
     bool stop;
@@ -261,19 +274,25 @@ bool CentroidUpdate::execute() {
             throw exception();
         algos[i]->setObjs(clust.second);
         centroid = algos[i]->centroid(&stop);
-        if (stop) 
+        if (stop)  {
             stopCount++;
+        }
         centroids.insert(centroid);
+        currCenters.push_back(centroid);
         i++;
     }
     cluster->setCenters(centroids);
     //we should stop if all centroids didn't change too much from the
-    //previous update
-    cluster->testPrintCurrentCenters();
-
-    //For vectors first return is better
-    //For curves we have to regulate the compare value, otherwise use second return
-
-    //return getDistanceBetweenSets(metric, previousCenters, cluster->getCenters()) < 0.005;
-    return stopCount == numClusters;
+    //previous update.This is an alternative stop condition
+    //This method is problematic when assignment algorithm changes 
+    //centroids (i.e when a cluster hasn't any items) but this case is rare. 
+    bool canStop = false;
+    if (prevCenters.size() > 0) {
+        //all algos should have the same threshold.
+        canStop = cumulativeVectorDistance(metric, prevCenters, currCenters) < numClusters * algos[0]->getThreshold();
+    }
+    prevCenters = currCenters;
+    currCenters.clear();
+    return canStop;
+    //return stopCount == numClusters;
 }

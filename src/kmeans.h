@@ -1,6 +1,7 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 #include <vector>
+#include <iostream>
 #include <set>
 #include "Curve.h"
 #include "distance.h"
@@ -25,10 +26,12 @@ class Kmeans {
     bool canStop() {
         if (prevCentroid == nullptr)
             return false;
+        //cout << "DIST:" << metric->dist(currCentroid,prevCentroid) << endl;
         if (metric->dist(currCentroid,prevCentroid) < stopThreshold) 
             return true;
         return false;
     }
+    double getThreshold() { return stopThreshold;}
     virtual Object *centroid(bool *stop) = 0;
 
 };
