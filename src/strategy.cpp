@@ -258,7 +258,7 @@ bool PAMUpdate::execute() {
     cout << endl;
     cluster->setCenters(currentCenters);
     cluster->testPrintCurrentCenters();
-    return getDistanceBetweenSets(metric, previousCenters, currentCenters) < 0.00001;
+    return getDistanceBetweenSets(metric, previousCenters, currentCenters) == 0;
 }
 
 bool CentroidUpdate::execute() {
@@ -293,6 +293,6 @@ bool CentroidUpdate::execute() {
     }
     prevCenters = currCenters;
     currCenters.clear();
-    return canStop;
-    //return stopCount == numClusters;
+    //return canStop;
+    return stopCount == numClusters;
 }
