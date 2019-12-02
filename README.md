@@ -46,6 +46,16 @@ Run all the following commands in project's root directory.
         
 #### Curves
 
+* [Dataset 1](src/dataset/curves/trajectories_dataset_very_small.csv), 7 clusters
+    * ALGORITHM 111: Silhouette Evaluation = 0.560874, Time Elapsed = 124.128
+    * ALGORITHM 112: Silhouette Evaluation = 0.593036, Time Elapsed = 330.733
+    * ALGORITHM 121: Silhouette Evaluation = 0.465221, Time Elapsed = 148.514
+    * ALGORITHM 122: Silhouette Evaluation = 0.764804, Time Elapsed = 235.677
+    * ALGORITHM 211: Silhouette Evaluation = 0.535267, Time Elapsed = 198.893
+    * ALGORITHM 212: Silhouette Evaluation = 0.824727, Time Elapsed = 295.249
+    * ALGORITHM 221: Silhouette Evaluation = 0.457437, Time Elapsed = 204.199
+    * ALGORITHM 222: Silhouette Evaluation = 0.583609, Time Elapsed = 240.295
+
 ## Conclusion
 
 * Initialization: KMeans++ produces efficient initial centers opposed to Random which usually does bad assignments. 
